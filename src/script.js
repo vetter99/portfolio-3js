@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 
 /**
  * Base
@@ -79,18 +80,106 @@ scene.add(backWallMesh);
  * Poster
  */
 // Create the poster frame geometry
-const frameGeometry = new THREE.BoxGeometry(10, 8, 0.5);
+const posterGeometry = new THREE.BoxGeometry(8, 11, 0.5);
 
 // Create the poster frame material
-const frameMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+const posterMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
 
 // Create the poster frame mesh
-const frameMesh = new THREE.Mesh(frameGeometry, frameMaterial);
+const posterMesh = new THREE.Mesh(posterGeometry, posterMaterial);
+posterMesh.position.set(10, 10, 20);
+posterMesh.rotation.y = Math.PI * 0.5;
 
 // Add the frame mesh to the scene
-scene.add(frameMesh);
+scene.add(posterMesh);
+
+// Add text to the poster
+
+// Create a canvas element for the chalkboard texture
+const canvas2 = document.createElement('canvas');
+canvas2.width = 1024;
+canvas2.height = 1024;
+
+// Get the 2D context of the canvas2
+const context = canvas2.getContext('2d');
+
+// Set the font size and family
+context.font = '50px Arial';
+
+// Set the text content and position
+const text = 'Welcome to my \nclass! asdf asf ads\nasdfadsfa sfa \n asdfa ';
+const x = 50;
+const y = 150;
+
+// Set the text color to white
+context.fillStyle = 'red';
+
+// Draw the text onto the canvas2
+context.fillText(text, x, y);
+
+// Create a texture from the canvas2
+const texture = new THREE.CanvasTexture(canvas2);
+
+// Create a material using the texture
+const material = new THREE.MeshBasicMaterial({map: texture},);
+
+// Create a plane geometry for the text
+const textGeometry = new THREE.PlaneGeometry(5, 2.5);
+
+// Create a mesh for the text geometry and material
+const textMesh = new THREE.Mesh(textGeometry, material);
+
+const frameSize = new THREE.Vector3();
+posterGeometry.computeBoundingBox();
+posterGeometry.boundingBox.getSize(frameSize);
+
+// Set the position and rotation of the text mesh
+textMesh.position.set(
+    posterMesh.position.x - frameSize.x / 2 + 0.5,  // Center the text horizontally within the frame
+    posterMesh.position.y + frameSize.y / 2 - 1.5,  // Position the text at the top of the frame
+    posterMesh.position.z + 0.251                  // Offset the text slightly in front of the frame
+);
+
+textMesh.rotation.y = Math.PI * 0.5;
+// Add the text mesh to the scene
+scene.add(textMesh);
 
   
+// const loader = new FontLoader();
+
+// loader.load( 'https://cdn.jsdelivr.net/npm/three/examples/fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+// 	const textGeometry = new TextGeometry( 'vetter', {
+// 		font: font,
+// 		size: 10,
+// 		height: 2,
+// 		curveSegments: 1,
+// 		bevelEnabled: true,
+// 		bevelThickness: 1,
+// 		bevelSize: 1,
+// 		bevelOffset: 0,
+// 		bevelSegments: 5,
+// 	} );
+
+//     // Center the text
+// textGeometry.center();
+
+// // Create the text material
+// const textMaterial = new THREE.MeshBasicMaterial({color: 'red'});
+
+// // Create the text mesh
+// const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+// // Position the text mesh in the center of the frame
+// textMesh.position.set(0, 0, 0.26);
+
+// // Add the text mesh to the frame mesh
+// frameMesh.add(textMesh);
+
+// } );
+
+
+
 
 
 /**
