@@ -32,7 +32,7 @@ gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
 /**
  * Floor
  */
-const floorGeometry = new THREE.PlaneGeometry(25, 50);
+const floorGeometry = new THREE.PlaneGeometry(175, 100);
 
 // Define the material
 const floorMaterial = new THREE.MeshPhongMaterial({
@@ -58,7 +58,7 @@ scene.add(floorMesh);
 /**
  * Back Wall
  */
-const backWallGeometry = new THREE.PlaneGeometry(25, 5);
+const backWallGeometry = new THREE.PlaneGeometry(175, 20);
 const backWallMaterial = new THREE.MeshPhongMaterial({
       color: 'white',
       map: new THREE.TextureLoader().load('/textures/brick3.jpg'),
@@ -71,7 +71,7 @@ const backWallMaterial = new THREE.MeshPhongMaterial({
 const backWallMesh = new THREE.Mesh(backWallGeometry, backWallMaterial);
 
 // Set the position and rotation of the wall mesh
-backWallMesh.position.y = 2.5;
+backWallMesh.position.y = 10;
 backWallMesh.position.z = -25
 scene.add(backWallMesh);
 
@@ -83,15 +83,18 @@ scene.add(backWallMesh);
 const posterGeometry = new THREE.BoxGeometry(8, 11, 0.5);
 
 // Create the poster frame material
-const posterMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
-
-// Create the poster frame mesh
-const posterMesh = new THREE.Mesh(posterGeometry, posterMaterial);
-posterMesh.position.set(10, 10, 20);
-posterMesh.rotation.y = Math.PI * 0.5;
-
-// Add the frame mesh to the scene
-scene.add(posterMesh);
+const posterMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    side: THREE.DoubleSide
+  });
+  
+  // Create the poster frame mesh
+  const posterMesh = new THREE.Mesh(posterGeometry, posterMaterial);
+  posterMesh.position.set(10, 10, 35);
+  posterMesh.rotation.y = Math.PI * 0.5;
+  
+  // Add the frame mesh to the scene
+  scene.add(posterMesh);
 
 // Add text to the poster
 
@@ -209,7 +212,7 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
 camera.position.x = 0
 camera.position.y = 25
 camera.position.z = 35
