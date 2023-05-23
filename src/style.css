@@ -10,25 +10,46 @@ body
     overflow: hidden;
 }
 
-/* .webgl
+html{
+    background-color: #1e1a20;
+}
+
+.webgl
 {
     position: fixed;
     top: 0;
     left: 0;
     outline: none;
-} */
+}
 
-
-.follow-box {
-    position: absolute;
-    z-index: 100;
-    border: 2px solid black;
-    background: #FCF0CC;
-    font-family: Arial;
-    font-weight: bold;
-    font-size: 2rem;
+.section
+{
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    height: 100vh;
+    position: relative;
+    font-family: 'Cabin', sans-serif;
+    color: #ffeded;
+    text-transform: uppercase;
+    font-size: 7vmin;
+    padding-left: 10%;
+    padding-right: 10%;
+    justify-content: flex-end;
+/* new for slide away */
+    transition: transform 0.5s, opacity 0.5s;
+    opacity: 1;
+
+    
+    scroll-snap-align: start;
+}
+
+.slide-out {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+#container {
+    height: 100vh; /* Set the height of the container to the viewport height */
+    overflow-y: scroll; /* Enable vertical scrolling */
+    scroll-snap-type: y mandatory; /* Enable scroll snapping on the y-axis */
 }

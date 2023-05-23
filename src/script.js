@@ -1,16 +1,29 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import gsap from 'gsap'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import TWEEN from 'tween.js'
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI()
+
+const parameters = {
+    materialColor: '#ffeded'
+}
+
+gui
+    .addColor(parameters, 'materialColor')
+    .onChange(() =>
+    {
+        material.color.set(parameters.materialColor)
+        particlesMaterial.color.set(parameters.materialColor)
+    })
 
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -18,111 +31,79 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
+ * Objects
+ */
+// Texture
+const textureLoader = new THREE.TextureLoader()
+const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
+gradientTexture.magFilter = THREE.NearestFilter
+
+// Material
+const material = new THREE.MeshToonMaterial({
+    color: parameters.materialColor,
+    gradientMap: gradientTexture
+})
+
+// Objects
+const objectsDistance = 7
+const mesh1 = new THREE.Mesh(
+    new THREE.TorusGeometry(0.5, 0.2, 16, 60),
+    material
+)
+const mesh2 = new THREE.Mesh(
+    new THREE.ConeGeometry(0.5, 1, 32),
+    material
+)
+const mesh3 = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(0.4, 0.15, 100, 16),
+    material
+)
+
+// mesh1.position.x = 0
+// mesh2.position.x = 0
+// mesh3.position.x = 0
+
+mesh1.position.y = - objectsDistance * 0
+mesh2.position.y = - objectsDistance * 1
+mesh3.position.y = - objectsDistance * 2
+
+scene.add(mesh1, mesh2, mesh3)
+
+const sectionMeshes = [ mesh1, mesh2, mesh3 ]
+
+/**
  * Lights
  */
-// ambient light is omnidirectional
-const ambientLight = new THREE.AmbientLight(0xffffff, 1) //0.1
-ambientLight.color = new THREE.Color('0xff0000')
-scene.add(ambientLight)
+const directionalLight = new THREE.DirectionalLight('#ffffff', 1)
+directionalLight.position.set(1, 1, 0)
+scene.add(directionalLight)
 
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('ambient intensity')
+/**
+ * Particles
+ */
+const particlesCount = 200
+const positions = new Float32Array(particlesCount * 3)
 
-
-// Lights
-
-for(let i = -1; i < 3; i++){
-  const spotLight = new THREE.SpotLight('white',1.5,50,Math.PI * 0.1, 0.25, 1)
-  spotLight.position.set(0, 20, i * 20)
-
-  const target = new THREE.Object3D();
-  target.position.set(0, 0, i * 20)
-  scene.add(target);
-  
-  spotLight.target = target;
-
-  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
-  // scene.add(spotLightHelper)
-  scene.add(spotLight)
+for(let i = 0; i < particlesCount; i++)
+{
+    positions[i * 3 + 0] = (Math.random() - 0.5) * 10
+    positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
 }
-// gui.add(spotLight.position, 'x').min(-20).max(20).step(0.001).name('spotLight x')
-// gui.add(spotLight.position, 'y').min(-20).max(20).step(0.001).name('spotLight y')
-// gui.add(spotLight.position, 'z').min(-20).max(20).step(0.001).name('spotLight z')
-// gui.add(spotLight, 'intensity').min(0).max(1).step(0.001).name('spotLight intensity')
 
-// spotLight.castShadow = true;
-// spotLight.shadow.mapSize.width = 1024;
-// spotLight.shadow.mapSize.height = 1024;
-// spotLight.shadow.camera.near = 10;
-// spotLight.shadow.camera.far = 200;
-// spotLight.shadow.focus = 1;
+const particlesGeometry = new THREE.BufferGeometry()
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
 
-/**
- * Floor
- */
-const floorGeometry = new THREE.PlaneGeometry(175, 100);
+// Material
+const particlesMaterial = new THREE.PointsMaterial({
+    color: parameters.materialColor,
+    sizeAttenuation: textureLoader,
+    size: 0.03
+})
 
-// Define the material
-const floorMaterial = new THREE.MeshPhongMaterial({
-//   color: 0xbdbdbd,
-  map: new THREE.TextureLoader().load('/textures/concrete-texture.jpg'),
-//   envMap: cubeTexture,
-  specular: 0xffffff,
-  shininess: 100
-});
-
-gui.add(floorMaterial, 'shininess').min(0).max(100).step(0.001)
-
-// Create the floor mesh
-const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-
-// Position the floor mesh
-floorMesh.rotation.x = - Math.PI * 0.5;
-
-// Add the floor mesh to the scene
-scene.add(floorMesh);
-
-
-/**
- * Back Wall
- */
-const backWallGeometry = new THREE.PlaneGeometry(175, 20);
-const backWallMaterial = new THREE.MeshPhongMaterial({
-      color: 'white',
-      map: new THREE.TextureLoader().load('/textures/brick3.jpg'),
-    //   envMap: cubeTexture,
-    //   specular: 0xffffff,
-    //   shininess: 100
-    });
-
-    
-const backWallMesh = new THREE.Mesh(backWallGeometry, backWallMaterial);
-
-// Set the position and rotation of the wall mesh
-backWallMesh.position.y = 10;
-backWallMesh.position.z = -40
-scene.add(backWallMesh);
-
-
-/**
- * Poster
- */
-// Create the poster frame geometry
-const posterGeometry = new THREE.BoxGeometry(8, 11, 0.5);
-
-// Create the poster frame material
-const posterMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    side: THREE.DoubleSide
-  });
-  
-  // Create the poster frame mesh
-  const posterMesh = new THREE.Mesh(posterGeometry, posterMaterial);
-  posterMesh.position.set(10, 10, 35);
-  posterMesh.rotation.y = Math.PI * 0.5;
-  
-  // Add the frame mesh to the scene
-  scene.add(posterMesh);
-
+// Points
+const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+scene.add(particles)
 
 /**
  * Sizes
@@ -134,8 +115,6 @@ const sizes = {
 
 window.addEventListener('resize', () =>
 {
-
-
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -152,49 +131,207 @@ window.addEventListener('resize', () =>
 /**
  * Camera
  */
+// Group
+const cameraGroup = new THREE.Group()
+scene.add(cameraGroup)
+
 // Base camera
-
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
-camera.position.x = 0
-camera.position.y = 25
-camera.position.z = 35
-scene.add(camera)
-
-
-gui.add(camera.position, 'x').min(-20).max(20).step(0.001).name('camera x')
-gui.add(camera.position, 'y').min(-20).max(20).step(0.001).name('camera y')
-gui.add(camera.position, 'z').step(0.001).name('camera z')
-
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+camera.position.z = 6
+cameraGroup.add(camera)
 
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    alpha: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+
+
+/**
+ * Cursor
+ */
+const cursor = {}
+cursor.x = 0
+cursor.y = 0
+
+window.addEventListener('mousemove', (event) =>
+{
+    cursor.x = event.clientX / sizes.width - 0.5
+    cursor.y = event.clientY / sizes.height - 0.5
+})
+
 /**
  * Animate
  */
+const clock = new THREE.Clock()
+let previousTime = 0
 
-const followText = document.getElementById('follow-text');
 const tick = () =>
 {
-    // Update controls
-    controls.update()
+    const elapsedTime = clock.getElapsedTime()
+    const deltaTime = elapsedTime - previousTime
+    previousTime = elapsedTime
 
+    // // Animate camera
+    // camera.position.y = - scrollY / sizes.height * objectsDistance
+
+    // const parallaxX = cursor.x * 0.5
+    // const parallaxY = - cursor.y * 0.5
+    // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
+    // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
+
+    // Animate meshes
+    for(const mesh of sectionMeshes)
+    {
+        mesh.rotation.x += deltaTime * 0.1
+        mesh.rotation.y += deltaTime * 0.12
+    }
+
+    TWEEN.update();
 
     // Render
     renderer.render(scene, camera)
-
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
 
 tick()
+
+
+/**
+ * Scroll
+ */
+let currentSection = 0
+
+const scrollContainer = document.getElementById('container');
+scrollContainer.addEventListener('scroll', handleScroll);
+var currentScroll = 0;
+
+function handleScroll() {
+  const scrollTop = scrollContainer.scrollTop;
+  const windowHeight = scrollContainer.clientHeight;
+  const scrollHeight = scrollContainer.scrollHeight;
+
+  console.log("Scrolling...", scrollTop)
+
+  const newSection = Math.round(currentScroll / sizes.height)
+
+  console.log("new section: " + newSection)
+  if(newSection != currentSection)
+  {
+      currentSection = newSection
+
+      gsap.to(
+          sectionMeshes[currentSection].rotation,
+          {
+              duration: 1.5,
+              ease: 'power2.inOut',
+              x: '+=6',
+              y: '+=3',
+              z: '+=1.5'
+          }
+      )
+  }
+
+  var yPosition = 0;
+
+  // IF scroll down, then move all objects up (unless you are on last section, then do nothing)
+  // IF scroll up, then move all objects down (unless you are on first section, then do nothing)
+
+  if(currentScroll < scrollTop) { //scrolling down
+    yPosition = 7;
+  }else{  //scrolling up
+    yPosition = -7;
+  }
+
+  currentScroll = scrollTop;
+  
+
+  // const scrollPercentage = scrollTop / (scrollHeight - windowHeight);
+  // console.log(scrollPercentage);
+  
+  // const targetIndex = Math.floor(scrollPercentage * sectionMeshes.length);
+
+  // // Calculate the target camera position based on the target index
+  // // const targetY = sectionMeshes[targetIndex].position.y;
+  // // const targetZ = objectsDistance * (targetIndex - 1);
+
+  // // Smoothly transition the camera position 
+  // new TWEEN.Tween(camera.position)
+  //   .to({x: 0, y: 5, z: 0}, 1000)
+  //   .easing(TWEEN.Easing.Quadratic.InOut)
+  //   .start();
+
+  for(const mesh of sectionMeshes){
+    const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
+
+    // Set up the animation
+    const duration = 500; // Animation duration in milliseconds
+
+    // Create a new Tween
+    const tween = new TWEEN.Tween(mesh.position)
+      .to(targetPosition, duration)
+      .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
+      .onUpdate(() => {
+        // Render the scene after each update
+        renderer.render(scene, camera);
+      })
+      .start(); // Start the animation
+
+  }
+
+
+  currentScroll = scrollTop;
+}
+
+
+
+
+
+
+
+
+// slide section to the side
+function slide() {
+  var sections = document.getElementsByClassName('section');
+  Array.from(sections).forEach(function(section) {
+      section.classList.toggle('slide-out');
+  });
+};
+
+// click event for each object
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Attach a click event listener to the document
+document.addEventListener('click', onDocumentClick);
+
+function onDocumentClick(event) {
+    // Calculate normalized device coordinates (NDC) of the mouse position
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Update the picking ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate intersections with the mesh
+    const intersects1 = raycaster.intersectObject(mesh1);
+    const intersects2 = raycaster.intersectObject(mesh2);
+    const intersects3 = raycaster.intersectObject(mesh3);
+
+    if (intersects1.length > 0 | intersects2.length > 0 | intersects3.length > 0) {
+        // Mesh was clicked
+        console.log('Mesh clicked!');
+
+        slide();
+        // Additional logic for interacting with the mesh...
+    }
+}
