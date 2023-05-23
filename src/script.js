@@ -211,64 +211,34 @@ tick()
 let currentSection = 0
 
 const scrollContainer = document.getElementById('container');
-scrollContainer.addEventListener('scroll', handleScroll);
+scrollContainer.addEventListener('wheel', handleWheel);
+
 var currentScroll = 0;
 
-function handleScroll() {
+function handleWheel(event) {
+
+  const deltaY = event.deltaY;
+
   const scrollTop = scrollContainer.scrollTop;
   const windowHeight = scrollContainer.clientHeight;
   const scrollHeight = scrollContainer.scrollHeight;
 
-  console.log("Scrolling...", scrollTop)
+  console.log("wheeling...", deltaY)
 
-  const newSection = Math.round(currentScroll / sizes.height)
-
-  console.log("new section: " + newSection)
-  if(newSection != currentSection)
-  {
-      currentSection = newSection
-
-      gsap.to(
-          sectionMeshes[currentSection].rotation,
-          {
-              duration: 1.5,
-              ease: 'power2.inOut',
-              x: '+=6',
-              y: '+=3',
-              z: '+=1.5'
-          }
-      )
-  }
+  const newSection = Math.round(currentScroll / sizes.height)   //how would you know which section you're on if its mouse events? Whichever mesh you click, thats the HTML you show!!
 
   var yPosition = 0;
 
   // IF scroll down, then move all objects up (unless you are on last section, then do nothing)
   // IF scroll up, then move all objects down (unless you are on first section, then do nothing)
 
-  if(currentScroll < scrollTop) { //scrolling down
+  if(deltaY > 0) { //scrolling down
     yPosition = 7;
   }else{  //scrolling up
     yPosition = -7;
   }
 
-  currentScroll = scrollTop;
-  
-
-  // const scrollPercentage = scrollTop / (scrollHeight - windowHeight);
-  // console.log(scrollPercentage);
-  
-  // const targetIndex = Math.floor(scrollPercentage * sectionMeshes.length);
-
-  // // Calculate the target camera position based on the target index
-  // // const targetY = sectionMeshes[targetIndex].position.y;
-  // // const targetZ = objectsDistance * (targetIndex - 1);
-
-  // // Smoothly transition the camera position 
-  // new TWEEN.Tween(camera.position)
-  //   .to({x: 0, y: 5, z: 0}, 1000)
-  //   .easing(TWEEN.Easing.Quadratic.InOut)
-  //   .start();
-
+  //move all of the mesh objects
   for(const mesh of sectionMeshes){
     const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
 
@@ -287,8 +257,6 @@ function handleScroll() {
 
   }
 
-
-  currentScroll = scrollTop;
 }
 
 

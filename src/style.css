@@ -4,11 +4,10 @@
     padding: 0;
 }
 
-html,
-body
-{
-    overflow: hidden;
-}
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
 
 html{
     background-color: #1e1a20;
@@ -50,6 +49,5 @@ html{
 
 #container {
     height: 100vh; /* Set the height of the container to the viewport height */
-    overflow-y: scroll; /* Enable vertical scrolling */
-    scroll-snap-type: y mandatory; /* Enable scroll snapping on the y-axis */
+    /* scroll-snap-type: y mandatory; Enable scroll snapping on the y-axis */
 }
