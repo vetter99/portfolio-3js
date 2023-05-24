@@ -4,6 +4,10 @@ import gsap from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import TWEEN from 'tween.js'
 
+
+var projectOpen = false;
+
+
 /**
  * Debug
  */
@@ -190,8 +194,8 @@ const tick = () =>
     // Animate meshes
     for(const mesh of sectionMeshes)
     {
-        mesh.rotation.x += deltaTime * 0.1
-        mesh.rotation.y += deltaTime * 0.12
+        mesh.rotation.x += deltaTime * 0.4
+        mesh.rotation.y += deltaTime * 0.33
     }
 
     TWEEN.update();
@@ -211,20 +215,30 @@ tick()
  */
 let currentSection = 0
 
-const scrollContainer = document.getElementById('container');
+// Why is their 2 event listeners??
+// const scrollContainer = document.getElementById('container');
 
-scrollContainer.addEventListener('mousewheel', handleWheel, {once: true});
+// scrollContainer.addEventListener('wheel', handleWheel, {once: true});
 
 
-document.addEventListener('mousewheel', function(e) {
-  console.log("triggered... " + e.deltaY)
-  handleWheel(e.deltaY)
-}, true);
+// document.addEventListener('wheel', function(e) {
+//   console.log("triggered... " + e.deltaY)
+//   handleWheel(e.deltaY)
+// }, true);
+
+// document.addEventListener('wheel', function(e) {
+//     console.log("triggered... " + e.deltaY)
+//     handleWheel(e.deltaY)
+//   }, true);
+
+document.addEventListener('wheel', handleWheel, true);
 
 
 var currentScroll = 0;
 
-function handleWheel(deltaY) {
+function handleWheel(e) {
+
+    console.log("inside: " + e.deltaY)
 
   const newSection = Math.round(currentScroll / sizes.height)   //how would you know which section you're on if its mouse events? Whichever mesh you click, thats the HTML you show!!
 
@@ -233,10 +247,10 @@ function handleWheel(deltaY) {
   // IF scroll down, then move all objects up (unless you are on last section, then do nothing)
   // IF scroll up, then move all objects down (unless you are on first section, then do nothing)
 
-  if(deltaY > 0) { //scrolling down
-    yPosition = 7;
+  if(e.deltaY > 0) { //scrolling down
+    yPosition = 6;
   }else{  //scrolling up
-    yPosition = -7;
+    yPosition = -6;
   }
 
   //move all of the mesh objects
@@ -244,13 +258,15 @@ function handleWheel(deltaY) {
     const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
 
     // Set up the animation
-    const duration = 500; // Animation duration in milliseconds
+    const duration = 300; // Animation duration in milliseconds
 
     // Create a new Tween
     const tween = new TWEEN.Tween(mesh.position)
       .to(targetPosition, duration)
       .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
       .onUpdate(() => {
+
+        
         // Render the scene after each update
         renderer.render(scene, camera);
       })
@@ -265,6 +281,19 @@ function handleWheel(deltaY) {
 
   // slide section to the side
 function slide(sectionId) {
+
+    projectOpen = !projectOpen;  //set project open to reverse
+
+    var xPosition = 0;
+
+    if(projectOpen){
+        document.removeEventListener('wheel', handleWheel, true);
+        xPosition = -4;
+    }else{
+        document.addEventListener('wheel', handleWheel, true);
+        xPosition = 0;
+    }
+    
     console.log("sectionId in is: " + sectionId);
     var section = document.getElementById(sectionId);
     console.log(section);
@@ -273,8 +302,25 @@ function slide(sectionId) {
 
     setTimeout(function() {
         section.classList.toggle('visible');
-    }, 250); // Adjust the delay as needed
+    }, 500); // Adjust the delay as needed
     
+
+    var meshClicked = sectionMeshes[sectionId]
+    console.log(meshClicked)
+    // move the object side to side for the project to show
+    const targetPosition = new THREE.Vector3(xPosition, meshClicked.position.y, meshClicked.position.z);
+
+    // Create a new Tween
+    const tween = new TWEEN.Tween(meshClicked.position)
+      .to(targetPosition, 300)
+      .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
+      .onUpdate(() => {
+
+        // Render the scene after each update
+        renderer.render(scene, camera);
+      })
+      .start(); // Start the animation
+   
 };
 
 // click event for each object
@@ -284,6 +330,7 @@ const mouse = new THREE.Vector2();
 
 // Attach a click event listener to the document
 document.addEventListener('click', onDocumentClick);
+
 
 function onDocumentClick(event) {
     // Calculate normalized device coordinates (NDC) of the mouse position
@@ -300,13 +347,14 @@ function onDocumentClick(event) {
 
     if (intersects1.length > 0) {
         console.log('Mesh 1 clicked!');
-        slide("1");
+       
+        slide("0");
     }else if(intersects2.length > 0){
         console.log('Mesh 2 clicked!');
-        slide("2");
+        slide("1");
     }else if(intersects3.length > 0){
         console.log('Mesh 3 clicked!');
-        slide("3");
+        slide("2");
     }else{
         console.log('clicked on nothing');
     }
