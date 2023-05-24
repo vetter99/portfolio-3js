@@ -174,6 +174,7 @@ let previousTime = 0
 
 const tick = () =>
 {
+    
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
@@ -211,19 +212,19 @@ tick()
 let currentSection = 0
 
 const scrollContainer = document.getElementById('container');
-scrollContainer.addEventListener('wheel', handleWheel);
+
+scrollContainer.addEventListener('mousewheel', handleWheel, {once: true});
+
+
+document.addEventListener('mousewheel', function(e) {
+  console.log("triggered... " + e.deltaY)
+  handleWheel(e.deltaY)
+}, true);
+
 
 var currentScroll = 0;
 
-function handleWheel(event) {
-
-  const deltaY = event.deltaY;
-
-  const scrollTop = scrollContainer.scrollTop;
-  const windowHeight = scrollContainer.clientHeight;
-  const scrollHeight = scrollContainer.scrollHeight;
-
-  console.log("wheeling...", deltaY)
+function handleWheel(deltaY) {
 
   const newSection = Math.round(currentScroll / sizes.height)   //how would you know which section you're on if its mouse events? Whichever mesh you click, thats the HTML you show!!
 
@@ -262,16 +263,18 @@ function handleWheel(event) {
 
 
 
+  // slide section to the side
+function slide(sectionId) {
+    console.log("sectionId in is: " + sectionId);
+    var section = document.getElementById(sectionId);
+    console.log(section);
+    section.classList.toggle('slide-in');
+    
 
-
-
-
-// slide section to the side
-function slide() {
-  var sections = document.getElementsByClassName('section');
-  Array.from(sections).forEach(function(section) {
-      section.classList.toggle('slide-out');
-  });
+    setTimeout(function() {
+        section.classList.toggle('visible');
+    }, 250); // Adjust the delay as needed
+    
 };
 
 // click event for each object
@@ -295,11 +298,16 @@ function onDocumentClick(event) {
     const intersects2 = raycaster.intersectObject(mesh2);
     const intersects3 = raycaster.intersectObject(mesh3);
 
-    if (intersects1.length > 0 | intersects2.length > 0 | intersects3.length > 0) {
-        // Mesh was clicked
-        console.log('Mesh clicked!');
-
-        slide();
-        // Additional logic for interacting with the mesh...
+    if (intersects1.length > 0) {
+        console.log('Mesh 1 clicked!');
+        slide("1");
+    }else if(intersects2.length > 0){
+        console.log('Mesh 2 clicked!');
+        slide("2");
+    }else if(intersects3.length > 0){
+        console.log('Mesh 3 clicked!');
+        slide("3");
+    }else{
+        console.log('clicked on nothing');
     }
 }
