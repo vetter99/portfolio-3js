@@ -3,9 +3,11 @@ import * as dat from 'lil-gui'
 import gsap from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import TWEEN from 'tween.js'
-
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 var projectOpen = false;
+
+const gltfLoader = new GLTFLoader()
 
 
 /**
@@ -33,6 +35,43 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+var javascriptObject;
+
+
+// load javascript object
+gltfLoader.load(
+    '/objects/javascript.glb',
+    (gltf) => {
+
+        javascriptObject = gltf.scene;
+        javascriptObject.scale.set(10, 10, 10);
+        javascriptObject.position.set(0, 1, 0);
+        javascriptObject.rotation.set(0, 0, 0); // Set the desired rotation angles
+        gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
+        gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
+        scene.add(javascriptObject);
+})
+
+
+// Create a box geometry
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+// Create a material for the mesh
+const mat = new THREE.MeshPhongMaterial({
+  color: 0xf7df1e, // Set the base color to yellow
+  shininess: 100,
+});
+
+// Create the mesh using the geometry and material
+const mesh = new THREE.Mesh(geometry, mat);
+
+// Position and rotate the mesh as needed
+mesh.position.set(0, 3, 0);
+mesh.rotation.set(0, Math.PI / -5, 0);
+
+// Add the mesh to the scene
+scene.add(mesh);
 
 /**
  * Objects
@@ -79,7 +118,11 @@ const sectionMeshes = [ mesh1, mesh2, mesh3 ]
  * Lights
  */
 const directionalLight = new THREE.DirectionalLight('#ffffff', 1)
-directionalLight.position.set(1, 1, 0)
+directionalLight.position.set(1, 5, 5)
+
+// add directional light helper
+const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
+scene.add(directionalLightHelper)
 scene.add(directionalLight)
 
 /**
@@ -145,6 +188,9 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.z = 6
 cameraGroup.add(camera)
 
+
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 /**
  * Renderer
  */
@@ -179,6 +225,7 @@ let previousTime = 0
 const tick = () =>
 {
     
+
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
@@ -190,6 +237,10 @@ const tick = () =>
     // const parallaxY = - cursor.y * 0.5
     // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
     // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
+    if (javascriptObject){
+        javascriptObject.rotation.y += deltaTime * 0.4
+    } 
+    
 
     // Animate meshes
     for(const mesh of sectionMeshes)
@@ -203,6 +254,9 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
+    controls.update();
+
+
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
@@ -215,30 +269,13 @@ tick()
  */
 let currentSection = 0
 
-// Why is their 2 event listeners??
-// const scrollContainer = document.getElementById('container');
-
-// scrollContainer.addEventListener('wheel', handleWheel, {once: true});
-
-
-// document.addEventListener('wheel', function(e) {
-//   console.log("triggered... " + e.deltaY)
-//   handleWheel(e.deltaY)
-// }, true);
-
-// document.addEventListener('wheel', function(e) {
-//     console.log("triggered... " + e.deltaY)
-//     handleWheel(e.deltaY)
-//   }, true);
-
 document.addEventListener('wheel', handleWheel, true);
-
 
 var currentScroll = 0;
 
 function handleWheel(e) {
 
-    console.log("inside: " + e.deltaY)
+  console.log("inside: " + e.deltaY)
 
   const newSection = Math.round(currentScroll / sizes.height)   //how would you know which section you're on if its mouse events? Whichever mesh you click, thats the HTML you show!!
 
@@ -258,7 +295,7 @@ function handleWheel(e) {
     const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
 
     // Set up the animation
-    const duration = 300; // Animation duration in milliseconds
+    const duration = 275; // Animation duration in milliseconds
 
     // Create a new Tween
     const tween = new TWEEN.Tween(mesh.position)
@@ -266,7 +303,6 @@ function handleWheel(e) {
       .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
       .onUpdate(() => {
 
-        
         // Render the scene after each update
         renderer.render(scene, camera);
       })
@@ -276,34 +312,7 @@ function handleWheel(e) {
 
 }
 
-
-
-
-  // slide section to the side
-function slide(sectionId) {
-
-    projectOpen = !projectOpen;  //set project open to reverse
-
-    var xPosition = 0;
-
-    if(projectOpen){
-        document.removeEventListener('wheel', handleWheel, true);
-        xPosition = -4;
-    }else{
-        document.addEventListener('wheel', handleWheel, true);
-        xPosition = 0;
-    }
-    
-    console.log("sectionId in is: " + sectionId);
-    var section = document.getElementById(sectionId);
-    console.log(section);
-    section.classList.toggle('slide-in');
-    
-
-    setTimeout(function() {
-        section.classList.toggle('visible');
-    }, 500); // Adjust the delay as needed
-    
+function slideMeshOver(sectionId, xPosition) {  
 
     var meshClicked = sectionMeshes[sectionId]
     console.log(meshClicked)
@@ -320,6 +329,66 @@ function slide(sectionId) {
         renderer.render(scene, camera);
       })
       .start(); // Start the animation
+
+}
+
+
+
+  // slide section to the side
+function slide(sectionId) {
+
+    var xPosition = 0;
+
+    console.log("sectionId in is: " + sectionId);
+    var section = document.getElementById(sectionId);
+    
+    
+    if(projectOpen){
+        document.addEventListener('wheel', handleWheel, true);
+        xPosition = 0;
+
+        
+        // move section away first
+        section.classList.toggle('slide-in');
+
+        setTimeout(function() {
+            slideMeshOver(sectionId, xPosition)
+           
+            setTimeout(function() {
+                section.classList.toggle('visible');
+            }, 250);
+
+        }, 250); 
+
+       
+    }else{
+        document.removeEventListener('wheel', handleWheel, true);
+        xPosition = -2;
+
+         // move mesh first
+        slideMeshOver(sectionId,xPosition)
+     
+
+        setTimeout(function() {
+            section.classList.toggle('slide-in');
+            section.classList.toggle('visible');
+        }, 250); 
+        
+
+    }
+    
+
+    
+
+
+
+    
+
+
+
+    
+
+    projectOpen = !projectOpen;  //set project open to reverse
    
 };
 

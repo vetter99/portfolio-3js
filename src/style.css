@@ -10,7 +10,7 @@ body {
   }
 
 html{
-    background-color: #1e1a20;
+    background-color: #0C0C0E;
 }
 
 .webgl
@@ -39,7 +39,7 @@ html{
      /* Slide */
     transition: transform 0.5s, opacity 0.5s;
     opacity: 0;
-    transform: translateX(200%);
+    transform: translateX(100%);
 }
 
 .visible{
@@ -48,9 +48,9 @@ html{
 
 
 .slide-in {
-    transform: translateX(130%);
-    opacity: 1;
-    visibility: visible;
+    transform: translateX(0%);
+    opacity: 1; 
+    /* visibility: visible; */
   }
 
 #container {
