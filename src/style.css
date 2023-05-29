@@ -5,14 +5,16 @@
 }
 
 body {
-    overflow-x: hidden;
-    overflow-y: hidden;
+    /* overflow-x: hidden;
+    overflow-y: hidden; */
   }
 
 html{
-    background-color: #0C0C0E;
+    background-color: #353535;
 }
 
+
+/* turns on/off orbit controls... */
 .webgl
 {
     position: fixed;

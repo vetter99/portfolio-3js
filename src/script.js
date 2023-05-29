@@ -38,40 +38,76 @@ const scene = new THREE.Scene()
 
 var javascriptObject;
 
+// object group
+const objectGroup = new THREE.Group()
+objectGroup.position.set(2, -0.5, 0);
+objectGroup.rotation.set(0,4.25, 0); // Set the desired rotation angles  
+objectGroup.scale.set(0.4,0.4,0.4)
+scene.add(objectGroup)
+
 
 // load javascript object
 gltfLoader.load(
-    '/objects/javascript.glb',
+    '/objects/java.glb',
     (gltf) => {
 
         javascriptObject = gltf.scene;
-        javascriptObject.scale.set(10, 10, 10);
-        javascriptObject.position.set(0, 1, 0);
-        javascriptObject.rotation.set(0, 0, 0); // Set the desired rotation angles
-        gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
-        gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
-        scene.add(javascriptObject);
+        // javascriptObject.scale.set(7,7,7);
+        javascriptObject.position.set(0, 0, -2.5);
+        // javascriptObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
+
+        objectGroup.add(javascriptObject)
+
+        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
+        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
+
+        // scene.add(javascriptObject);
+        // var axesHelper = new THREE.AxesHelper( 100 );
+        // scene.add( axesHelper );
+})
+
+var blenderObject;
+
+gltfLoader.load(
+    '/objects/blender.glb',
+    (gltf) => {
+
+        blenderObject = gltf.scene;
+        // blenderObject.scale.set(.75,.75,.75);
+        // javascriptObject.position.set(3, -1, 0);
+        // blenderObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
+        blenderObject.position.set(0, 0, 2.5);
+        objectGroup.add(blenderObject)
+
+        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
+        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
+
+        // scene.add(javascriptObject);
+        // var axesHelper = new THREE.AxesHelper( 100 );
+        // scene.add( axesHelper );
+})
+
+var nativescriptObject;
+gltfLoader.load(
+    '/objects/nativescript.glb',
+    (gltf) => {
+
+        nativescriptObject = gltf.scene;
+        // blenderObject.scale.set(.75,.75,.75);
+        // javascriptObject.position.set(3, -1, 0);
+        // blenderObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
+        objectGroup.add(nativescriptObject)
+
+        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
+        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
+
+        // scene.add(javascriptObject);
+        // var axesHelper = new THREE.AxesHelper( 100 );
+        // scene.add( axesHelper );
 })
 
 
-// Create a box geometry
-const geometry = new THREE.BoxGeometry(1, 1, 1);
 
-// Create a material for the mesh
-const mat = new THREE.MeshPhongMaterial({
-  color: 0xf7df1e, // Set the base color to yellow
-  shininess: 100,
-});
-
-// Create the mesh using the geometry and material
-const mesh = new THREE.Mesh(geometry, mat);
-
-// Position and rotate the mesh as needed
-mesh.position.set(0, 3, 0);
-mesh.rotation.set(0, Math.PI / -5, 0);
-
-// Add the mesh to the scene
-scene.add(mesh);
 
 /**
  * Objects
@@ -117,13 +153,67 @@ const sectionMeshes = [ mesh1, mesh2, mesh3 ]
 /**
  * Lights
  */
-const directionalLight = new THREE.DirectionalLight('#ffffff', 1)
-directionalLight.position.set(1, 5, 5)
 
-// add directional light helper
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
-scene.add(directionalLightHelper)
-scene.add(directionalLight)
+// Ambient light
+const ambientLight = new THREE.AmbientLight('#b9d5ff', 0.5)
+gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('ambientIntensity');
+scene.add(ambientLight)
+
+// // Directional light
+const moonLight = new THREE.DirectionalLight('#b9d5ff', 1)
+moonLight.castShadow = true
+moonLight.shadow.mapSize.width = 256
+moonLight.shadow.mapSize.height = 256
+moonLight.position.set(-5, 5, 0)
+// moonLight.shadow.camera.far = 100
+// moonLight.position.set(-4, 5, 0)
+// moonLight.lookAt = objectGroup;
+
+gui.add(moonLight, 'intensity').min(0).max(1).step(0.001).name('moonIntensity');
+gui.add(moonLight.position, 'x').min(- 5).max(5).step(0.001)
+gui.add(moonLight.position, 'y').min(- 5).max(5).step(0.001)
+gui.add(moonLight.position, 'z').min(- 10).max(10).step(0.001)
+scene.add(moonLight)
+
+// // add directional light helper
+const moonLightHelper = new THREE.DirectionalLightHelper(moonLight, 0.2);
+scene.add(moonLightHelper)
+
+
+const doorLight = new THREE.PointLight('#ff7d46', 5,4)
+doorLight.castShadow = true
+doorLight.shadow.mapSize.width = 256
+doorLight.shadow.mapSize.height = 256
+doorLight.shadow.camera.far = 7
+
+doorLight.position.set(-3, -0.5, -0.5)
+
+gui.add(doorLight, 'intensity').min(0).max(100).step(0.001).name('doorIntensity');
+gui.add(doorLight.position, 'x').min(- 5).max(5).step(0.001).name('doorX');
+gui.add(doorLight.position, 'y').min(- 5).max(5).step(0.001).name('doorY');
+gui.add(doorLight.position, 'z').min(- 5).max(5).step(0.001).name('doorZ');
+
+const doorLightHelper = new THREE.PointLightHelper(doorLight, 0.2)
+
+// objectGroup.add(doorLight)
+// objectGroup.add(doorLightHelper)
+// scene.add(doorLightHelper)
+// scene.add(doorLight)
+
+
+// const directionalLight = new THREE.DirectionalLight('#ffffff',10)
+// directionalLight.position.set(-5, 5,10)
+
+// // add directional light helper
+// const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
+// const lightFolder = gui.addFolder('Directional Light');
+// lightFolder.add(directionalLight.position, 'x', -10, 10).name('Light X');
+// lightFolder.add(directionalLight.position, 'y', -10, 10).name('Light Y');
+// lightFolder.add(directionalLight.position, 'z', -10, 10).name('Light Z');
+// lightFolder.add(directionalLight, 'intensity', 0, 20).name('Intensity');
+
+// scene.add(directionalLightHelper)
+// scene.add(directionalLight)
 
 /**
  * Particles
@@ -148,9 +238,9 @@ const particlesMaterial = new THREE.PointsMaterial({
     size: 0.03
 })
 
-// Points
+// Particles
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+// scene.add(particles)
 
 /**
  * Sizes
@@ -162,6 +252,7 @@ const sizes = {
 
 window.addEventListener('resize', () =>
 {
+
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -185,8 +276,10 @@ scene.add(cameraGroup)
 // Base camera
 // const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.z = 6
-cameraGroup.add(camera)
+camera.position.x = 0
+camera.position.y = 0
+camera.position.z = 4
+scene.add(camera)
 
 
 const controls = new OrbitControls(camera, canvas)
@@ -198,8 +291,14 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     alpha: true
 })
+
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// renderer.antialias = true;
+
+
 
 
 
@@ -210,11 +309,11 @@ const cursor = {}
 cursor.x = 0
 cursor.y = 0
 
-window.addEventListener('mousemove', (event) =>
-{
-    cursor.x = event.clientX / sizes.width - 0.5
-    cursor.y = event.clientY / sizes.height - 0.5
-})
+// window.addEventListener('mousemove', (event) =>
+// {
+//     cursor.x = event.clientX / sizes.width - 0.5
+//     cursor.y = event.clientY / sizes.height - 0.5
+// })
 
 /**
  * Animate
@@ -237,9 +336,9 @@ const tick = () =>
     // const parallaxY = - cursor.y * 0.5
     // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
     // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
-    if (javascriptObject){
-        javascriptObject.rotation.y += deltaTime * 0.4
-    } 
+    // if (javascriptObject){
+    //     javascriptObject.rotation.y += deltaTime * 0.4
+    // } 
     
 
     // Animate meshes
@@ -269,7 +368,7 @@ tick()
  */
 let currentSection = 0
 
-document.addEventListener('wheel', handleWheel, true);
+// document.addEventListener('wheel', handleWheel, true);
 
 var currentScroll = 0;
 
