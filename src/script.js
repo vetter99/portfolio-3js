@@ -39,72 +39,18 @@ const scene = new THREE.Scene()
 var javascriptObject;
 
 // object group
-const objectGroup = new THREE.Group()
-objectGroup.position.set(2, -0.5, 0);
-objectGroup.rotation.set(0,4.25, 0); // Set the desired rotation angles  
-objectGroup.scale.set(0.4,0.4,0.4)
-scene.add(objectGroup)
+const techGroup1 = new THREE.Group()
+techGroup1.position.set(10, -0.5, 0);
+techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
+techGroup1.scale.set(0.4,0.4,0.4)
+scene.add(techGroup1)
+
+// Load 3D objects into group
+loadIconObject("/objects/java.glb",techGroup1,[0, 0, -2.5]);
+loadIconObject("/objects/blender.glb",techGroup1,[0, 0, 2.5]);
+loadIconObject("/objects/nativescript.glb",techGroup1,[0, 0, 0]);
 
 
-// load javascript object
-gltfLoader.load(
-    '/objects/java.glb',
-    (gltf) => {
-
-        javascriptObject = gltf.scene;
-        // javascriptObject.scale.set(7,7,7);
-        javascriptObject.position.set(0, 0, -2.5);
-        // javascriptObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
-
-        objectGroup.add(javascriptObject)
-
-        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
-        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
-
-        // scene.add(javascriptObject);
-        // var axesHelper = new THREE.AxesHelper( 100 );
-        // scene.add( axesHelper );
-})
-
-var blenderObject;
-
-gltfLoader.load(
-    '/objects/blender.glb',
-    (gltf) => {
-
-        blenderObject = gltf.scene;
-        // blenderObject.scale.set(.75,.75,.75);
-        // javascriptObject.position.set(3, -1, 0);
-        // blenderObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
-        blenderObject.position.set(0, 0, 2.5);
-        objectGroup.add(blenderObject)
-
-        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
-        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
-
-        // scene.add(javascriptObject);
-        // var axesHelper = new THREE.AxesHelper( 100 );
-        // scene.add( axesHelper );
-})
-
-var nativescriptObject;
-gltfLoader.load(
-    '/objects/nativescript.glb',
-    (gltf) => {
-
-        nativescriptObject = gltf.scene;
-        // blenderObject.scale.set(.75,.75,.75);
-        // javascriptObject.position.set(3, -1, 0);
-        // blenderObject.rotation.set(0, 3.5, 0); // Set the desired rotation angles
-        objectGroup.add(nativescriptObject)
-
-        // gui.add(javascriptObject.position, 'x').min(- 10).max(10).step(0.001).name('positionX');
-        // gui.add(javascriptObject.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation');
-
-        // scene.add(javascriptObject);
-        // var axesHelper = new THREE.AxesHelper( 100 );
-        // scene.add( axesHelper );
-})
 
 
 
@@ -446,7 +392,8 @@ function slide(sectionId) {
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
 
-        
+        slideGroupToPosition(techGroup1, new THREE.Vector3(10, -0.5, 0), 3500);
+
         // move section away first
         section.classList.toggle('slide-in');
 
@@ -466,7 +413,7 @@ function slide(sectionId) {
 
          // move mesh first
         slideMeshOver(sectionId,xPosition)
-     
+        slideGroupToPosition(techGroup1, new THREE.Vector3(2, -0.5, 0), 2000);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
@@ -517,6 +464,7 @@ function onDocumentClick(event) {
         console.log('Mesh 1 clicked!');
        
         slide("0");
+        
     }else if(intersects2.length > 0){
         console.log('Mesh 2 clicked!');
         slide("1");
@@ -527,3 +475,37 @@ function onDocumentClick(event) {
         console.log('clicked on nothing');
     }
 }
+
+
+function loadIconObject(fileLocation, groupName,positionArray){
+
+gltfLoader.load(
+    fileLocation,
+    (gltf) => {
+        var object = gltf.scene;
+        object.position.set(positionArray[0], positionArray[1], positionArray[2])
+        groupName.add(object)
+})
+
+}
+
+
+function slideGroupToPosition(group, targetPosition, duration) {
+    // Store the current position of the group
+    const startPosition = group.position.clone();
+  
+    // Create a TWEEN animation for the position
+    new TWEEN.Tween(group.position)
+      .to(targetPosition, duration)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onUpdate(() => {
+        // Update the position during the animation
+        // (optional: you can add any additional logic here)
+      })
+      .onComplete(() => {
+        // Animation completed
+        // (optional: you can add any additional logic here)
+      })
+      .start();
+  }
+  

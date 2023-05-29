@@ -42,6 +42,7 @@ html{
     transition: transform 0.5s, opacity 0.5s;
     opacity: 0;
     transform: translateX(100%);
+    padding-bottom:100px;
 }
 
 .visible{
