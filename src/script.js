@@ -39,18 +39,26 @@ const scene = new THREE.Scene()
 var javascriptObject;
 
 // object group
+const techGroup0 = new THREE.Group()
+techGroup0.position.set(10, -0.5, 0);
+techGroup0.rotation.set(0,4.5, 0); // Set the desired rotation angles  
+techGroup0.scale.set(0.4,0.4,0.4)
+scene.add(techGroup0)
+
+// Load 3D objects into group
+loadIconObject("/objects/java.glb",techGroup0,[0, 0, -2.5]);
+loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
+loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
+
+
+
 const techGroup1 = new THREE.Group()
 techGroup1.position.set(10, -0.5, 0);
 techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
 techGroup1.scale.set(0.4,0.4,0.4)
 scene.add(techGroup1)
 
-// Load 3D objects into group
 loadIconObject("/objects/java.glb",techGroup1,[0, 0, -2.5]);
-loadIconObject("/objects/blender.glb",techGroup1,[0, 0, 2.5]);
-loadIconObject("/objects/nativescript.glb",techGroup1,[0, 0, 0]);
-
-
 
 
 
@@ -314,7 +322,7 @@ tick()
  */
 let currentSection = 0
 
-// document.addEventListener('wheel', handleWheel, true);
+document.addEventListener('wheel', handleWheel, true);  //adding the wheel event listener from the start
 
 var currentScroll = 0;
 
@@ -392,7 +400,7 @@ function slide(sectionId) {
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
 
-        slideGroupToPosition(techGroup1, new THREE.Vector3(10, -0.5, 0), 3500);
+        slideGroupToPosition(sectionId, new THREE.Vector3(10, -0.5, 0), 2500);
 
         // move section away first
         section.classList.toggle('slide-in');
@@ -413,7 +421,7 @@ function slide(sectionId) {
 
          // move mesh first
         slideMeshOver(sectionId,xPosition)
-        slideGroupToPosition(techGroup1, new THREE.Vector3(2, -0.5, 0), 2000);
+        slideGroupToPosition(sectionId, new THREE.Vector3(2, -0.5, 0), 2000);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
@@ -490,7 +498,17 @@ gltfLoader.load(
 }
 
 
-function slideGroupToPosition(group, targetPosition, duration) {
+function slideGroupToPosition(sectionNumber, targetPosition, duration) {
+    
+    var group;
+
+    if(sectionNumber == 0){
+        group = techGroup0
+    }else if(sectionNumber == 1){
+        group = techGroup1
+    }else{
+        group = techGroup2
+    }  
     // Store the current position of the group
     const startPosition = group.position.clone();
   
