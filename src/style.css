@@ -3,7 +3,6 @@
     margin: 0;
     padding: 0;
     cursor: none;
-    pointer-events: none;
 }
 
 /* body {
@@ -11,14 +10,22 @@
     overflow-y: hidden;
   } */
 
+  header{
+    pointer-events: all;
+    cursor: auto;
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
 #cursor {
-    pointer-events: none;
     position: fixed;
     width: 15px;
     height: 15px;
     background-color: white;
     border-radius: 50%;
-    /* mix-blend-mode: difference; */
     transition: transform 0.3s ease;
     z-index: 9999;
 }
@@ -87,53 +94,3 @@ html{
 }
 
 /* Section Styling */
-
-.summary-container {
-    padding: 2rem;
-  }
-  
-  .summary-container h2 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .summary-container p {
-    margin-bottom: 1.5rem;
-  }
-  
-  .languages-used {
-    margin-bottom: 1.5rem;
-  }
-  
-  .languages-used h3 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .languages-used ul {
-    list-style: none;
-    margin-left: 1rem;
-  }
-  
-  .languages-used li {
-    margin-bottom: 0.5rem;
-  }
-  
-  .lessons-learned {
-    margin-bottom: 1.5rem;
-  }
-  
-  .lessons-learned h3 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .project-link {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: #ffeded;
-    color: #1e1a20;
-    font-size: 1.5rem;
-    text-decoration: none;
-    border-radius: 4px;
-  }

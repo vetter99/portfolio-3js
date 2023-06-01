@@ -14,6 +14,7 @@ const gltfLoader = new GLTFLoader()
  * Debug
  */
 const gui = new dat.GUI()
+gui.hide();
 
 const parameters = {
     materialColor: '#ffeded'
@@ -61,6 +62,14 @@ scene.add(techGroup1)
 
 loadIconObject("/objects/java.glb",techGroup1,[0, 0, -2.5]);
 
+
+const techGroup2 = new THREE.Group()
+techGroup2.position.set(10, -0.5, 0);
+techGroup2.rotation.set(0,4.5, 0); // Set the desired rotation angles  
+techGroup2.scale.set(0.4,0.4,0.4)
+scene.add(techGroup2)
+
+loadIconObject("/objects/blender.glb",techGroup2,[0, 0, -2.5]);
 
 
 
@@ -518,6 +527,7 @@ document.addEventListener('click', onDocumentClick);
 
 
 
+
 function onMouseHoverObject(event) {
   // Calculate normalized device coordinates (NDC) of the mouse position
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -636,3 +646,15 @@ function slideGroupToPosition(sectionNumber, targetPosition, duration) {
     return array;
   }
 
+
+
+  document.querySelectorAll('.fa-github, .fa-linkedin, .fa-envelope').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+        console.log("Here");
+      var link = this.parentNode; // Get the parent link element
+      var href = link.getAttribute('href'); // Get the href attribute
+      if (href) {
+        window.open(href, '_blank'); // Open the link in a new tab/window
+      }
+    });
+  });
