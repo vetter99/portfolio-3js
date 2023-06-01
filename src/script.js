@@ -83,6 +83,7 @@ const mesh1 = new THREE.Mesh(
     new THREE.TorusGeometry(0.5, 0.2, 16, 60),
     material
 )
+
 const mesh2 = new THREE.Mesh(
     new THREE.ConeGeometry(0.5, 1, 32),
     material
@@ -97,12 +98,20 @@ const mesh3 = new THREE.Mesh(
 // mesh3.position.x = 0
 
 mesh1.position.y = - objectsDistance * 0
-mesh2.position.y = - objectsDistance * 1
-mesh3.position.y = - objectsDistance * 2
+mesh2.position.y = - objectsDistance * -1
+mesh3.position.y = - objectsDistance * 1
 
 scene.add(mesh1, mesh2, mesh3)
 
-const sectionMeshes = [ mesh1, mesh2, mesh3 ]
+var sectionMeshes = [ mesh1, mesh2, mesh3 ]
+
+const sectionObjects = {
+    mesh1: mesh1,
+    mesh2: mesh2,
+    mesh3: mesh3
+  };
+  
+  
 
 /**
  * Lights
@@ -236,8 +245,10 @@ camera.position.z = 4
 scene.add(camera)
 
 
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
+
+
 /**
  * Renderer
  */
@@ -307,7 +318,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    controls.update();
+    // controls.update();
 
 
     // Call tick again on the next frame
@@ -324,31 +335,70 @@ let currentSection = 0
 
 document.addEventListener('wheel', handleWheel, true);  //adding the wheel event listener from the start
 
-var currentScroll = 0;
+var animationRunning = false;
 
-function handleWheel(e) {
 
-  console.log("inside: " + e.deltaY)
+// 
 
-  const newSection = Math.round(currentScroll / sizes.height)   //how would you know which section you're on if its mouse events? Whichever mesh you click, thats the HTML you show!!
+function handleWheel(event) {
+//   instead of removing the event listener and adding it back, we can just use a boolean to check if the animation is running
+
+
+  if (animationRunning == false) {
+
+  console.log("Trigger the mesh movement!");
+  animationRunning = true;
+
+
+    setTimeout(function() {
+        animationRunning = false;
+    }, 2000);
+
+    //   console.log("y scroll direction: " + event.deltaY)
 
   var yPosition = 0;
+  
+//   Every time you scroll down, you put the top most item at the bottom…
+//   Every time you scroll up, you put the bottom most item at the top…
+// may need a delay to wait for the animation to finish
 
-  // IF scroll down, then move all objects up (unless you are on last section, then do nothing)
-  // IF scroll up, then move all objects down (unless you are on first section, then do nothing)
+  if(event.deltaY > 0) { //scrolling down
+    yPosition = 7;
+    currentSection++;
 
-  if(e.deltaY > 0) { //scrolling down
-    yPosition = 6;
+    // console.log("top most item: " + Object.keys(sectionObjects)[0]);
+
+    // move top most mesh instantly to the bottom.
+    sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
+    sectionMeshes = moveItems(sectionMeshes, false)
+    
+
+    
+ 
+
   }else{  //scrolling up
-    yPosition = -6;
+    yPosition = -7;
+    currentSection--;
+
+     // move bottom most mesh instantly to the top.
+    sectionMeshes[sectionMeshes.length - 1].position.y = sectionMeshes[0].position.y - yPosition;
+    sectionMeshes = moveItems(sectionMeshes, true)
   }
 
-  //move all of the mesh objects
+
+
+//   instead of an arbitrary value for yPosition, we can use the sizes.height to get the correct value
+
+  //move all of the mesh objects //TODO make them a group and move the entire group together?
+
   for(const mesh of sectionMeshes){
+  console.log("position: " +  mesh.position.y);
+
     const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
 
     // Set up the animation
-    const duration = 275; // Animation duration in milliseconds
+    const duration = 1000; // Animation duration in milliseconds
+
 
     // Create a new Tween
     const tween = new TWEEN.Tween(mesh.position)
@@ -360,8 +410,15 @@ function handleWheel(e) {
         renderer.render(scene, camera);
       })
       .start(); // Start the animation
-
   }
+
+  console.log("Here after...") // this may need a delay to wait for the animation to finish
+
+
+
+}else{
+    console.log("DONT trigger the mesh movement")
+}
 
 }
 
@@ -527,3 +584,14 @@ function slideGroupToPosition(sectionNumber, targetPosition, duration) {
       .start();
   }
   
+
+  function moveItems(array, up) {
+    if (up) {
+      const lastItem = array.pop();
+      array.unshift(lastItem);
+    } else {
+      const firstItem = array.shift();
+      array.push(firstItem);
+    }
+    return array;
+  }
