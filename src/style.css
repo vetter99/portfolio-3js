@@ -93,4 +93,11 @@ html{
     /* scroll-snap-type: y mandatory;  */
 }
 
+i{
+  color: yellow;
+}
+
+h1{
+  color:yellow;
+}
 /* Section Styling */
