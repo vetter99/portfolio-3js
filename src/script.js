@@ -52,6 +52,7 @@ loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
 
 
 
+
 const techGroup1 = new THREE.Group()
 techGroup1.position.set(10, -0.5, 0);
 techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
@@ -270,15 +271,19 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Cursor
  */
-const cursor = {}
-cursor.x = 0
-cursor.y = 0
 
-// window.addEventListener('mousemove', (event) =>
-// {
-//     cursor.x = event.clientX / sizes.width - 0.5
-//     cursor.y = event.clientY / sizes.height - 0.5
-// })
+const cursor = document.getElementById('cursor');
+const cursorIconLock = document.getElementById('cursor-icon-lock');
+const cursorIconUnlock = document.getElementById('cursor-icon-unlock');
+
+
+window.addEventListener('mousemove', (event) => {
+    const { clientX: x, clientY: y } = event;
+    cursor.style.left = x + 'px';
+    cursor.style.top = y + 'px';
+
+    onMouseHoverObject(event);
+});
 
 /**
  * Animate
@@ -512,6 +517,41 @@ const mouse = new THREE.Vector2();
 document.addEventListener('click', onDocumentClick);
 
 
+
+function onMouseHoverObject(event) {
+  // Calculate normalized device coordinates (NDC) of the mouse position
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // Update the picking ray with the camera and mouse position
+  raycaster.setFromCamera(mouse, camera);
+
+  // Calculate intersections with the mesh
+  const intersects1 = raycaster.intersectObject(mesh1);
+  const intersects2 = raycaster.intersectObject(mesh2);
+  const intersects3 = raycaster.intersectObject(mesh3);
+
+  if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0) {
+        // hovering over the meshes
+        cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
+        cursor.style.transform = 'scale(2)'; // Example: scale cursor size
+
+        console.log("projectOpen: " + projectOpen);
+
+        cursorIconLock.style.display = projectOpen ? 'block' : 'none';
+        cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
+
+  }else{
+        cursor.style.backgroundColor = 'white'; // Change cursor color to red
+        cursor.style.transform = 'scale(1)'; // Example: scale cursor size
+        cursorIconLock.style.display = 'none';
+        cursorIconUnlock.style.display = 'none';
+  }
+
+    
+}
+
+
 function onDocumentClick(event) {
     // Calculate normalized device coordinates (NDC) of the mouse position
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -595,3 +635,4 @@ function slideGroupToPosition(sectionNumber, targetPosition, duration) {
     }
     return array;
   }
+
