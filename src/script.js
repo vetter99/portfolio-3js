@@ -89,39 +89,28 @@ const material = new THREE.MeshToonMaterial({
 
 // Objects
 const objectsDistance = 7
-const mesh1 = new THREE.Mesh(
-    new THREE.TorusGeometry(0.5, 0.2, 16, 60),
+const boxMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
     material
 )
 
-const mesh2 = new THREE.Mesh(
+const coneMesh = new THREE.Mesh(
     new THREE.ConeGeometry(0.5, 1, 32),
     material
 )
-const mesh3 = new THREE.Mesh(
+const torusKnotMesh = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.4, 0.15, 100, 16),
     material
 )
 
-// mesh1.position.x = 0
-// mesh2.position.x = 0
-// mesh3.position.x = 0
 
-mesh1.position.y = - objectsDistance * 0
-mesh2.position.y = - objectsDistance * -1
-mesh3.position.y = - objectsDistance * 1
+boxMesh.position.y = - objectsDistance * -1
+coneMesh.position.y = - objectsDistance * 0
+torusKnotMesh.position.y = - objectsDistance * 1
 
-scene.add(mesh1, mesh2, mesh3)
+scene.add(boxMesh, coneMesh, torusKnotMesh)
 
-var sectionMeshes = [ mesh1, mesh2, mesh3 ]
-
-const sectionObjects = {
-    mesh1: mesh1,
-    mesh2: mesh2,
-    mesh3: mesh3
-  };
-  
-  
+var sectionMeshes = [ boxMesh, coneMesh, torusKnotMesh ]  
 
 /**
  * Lights
@@ -380,8 +369,6 @@ function handleWheel(event) {
     yPosition = 7;
     currentSection++;
 
-    // console.log("top most item: " + Object.keys(sectionObjects)[0]);
-
     // move top most mesh instantly to the bottom.
     sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
     sectionMeshes = moveItems(sectionMeshes, false)
@@ -438,6 +425,7 @@ function handleWheel(event) {
 
 function slideMeshOver(sectionId, xPosition) {  
 
+    updateCursor(false); 
     var meshClicked = sectionMeshes[sectionId]
     console.log(meshClicked)
     // move the object side to side for the project to show
@@ -468,6 +456,7 @@ function slide(sectionId) {
     
     
     if(projectOpen){
+        
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
 
@@ -537,25 +526,16 @@ function onMouseHoverObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   // Calculate intersections with the mesh
-  const intersects1 = raycaster.intersectObject(mesh1);
-  const intersects2 = raycaster.intersectObject(mesh2);
-  const intersects3 = raycaster.intersectObject(mesh3);
+  const intersects1 = raycaster.intersectObject(boxMesh);
+  const intersects2 = raycaster.intersectObject(coneMesh);
+  const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
+  
   if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0) {
-        // hovering over the meshes
-        cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
-        cursor.style.transform = 'scale(2)'; // Example: scale cursor size
-
-        console.log("projectOpen: " + projectOpen);
-
-        cursorIconLock.style.display = projectOpen ? 'block' : 'none';
-        cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
-
+        updateCursor(true); 
   }else{
-        cursor.style.backgroundColor = 'white'; // Change cursor color to red
-        cursor.style.transform = 'scale(1)'; // Example: scale cursor size
-        cursorIconLock.style.display = 'none';
-        cursorIconUnlock.style.display = 'none';
+
+        updateCursor(false);
   }
 
     
@@ -571,13 +551,15 @@ function onDocumentClick(event) {
     raycaster.setFromCamera(mouse, camera);
 
     // Calculate intersections with the mesh
-    const intersects1 = raycaster.intersectObject(mesh1);
-    const intersects2 = raycaster.intersectObject(mesh2);
-    const intersects3 = raycaster.intersectObject(mesh3);
+    const intersects1 = raycaster.intersectObject(boxMesh);
+    const intersects2 = raycaster.intersectObject(coneMesh);
+    const intersects3 = raycaster.intersectObject(torusKnotMesh);
+
+
+//TODO: problem lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
 
     if (intersects1.length > 0) {
-        console.log('Mesh 1 clicked!');
-       
+        
         slide("0");
         
     }else if(intersects2.length > 0){
@@ -658,3 +640,23 @@ function slideGroupToPosition(sectionNumber, targetPosition, duration) {
       }
     });
   });
+
+
+  function updateCursor(hovering){
+
+
+    if(hovering){
+        cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
+        cursor.style.transform = 'scale(2)'; // Example: scale cursor size
+
+        console.log("projectOpen: " + projectOpen);
+
+        cursorIconLock.style.display = projectOpen ? 'block' : 'none';
+        cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
+    }else{
+        cursor.style.backgroundColor = 'white'; // Change cursor color to red
+        cursor.style.transform = 'scale(1)'; // Example: scale cursor size
+        cursorIconLock.style.display = 'none';
+        cursorIconUnlock.style.display = 'none';
+    }
+  }
