@@ -93,15 +93,20 @@ const boxMesh = new THREE.Mesh(
     new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
     material
 )
+boxMesh.name = "project0"
 
 const coneMesh = new THREE.Mesh(
     new THREE.ConeGeometry(0.5, 1, 32),
     material
 )
+coneMesh.name = "project1"
+
+
 const torusKnotMesh = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.4, 0.15, 100, 16),
     material
 )
+torusKnotMesh.name = "project2"
 
 
 boxMesh.position.y = - objectsDistance * -1
@@ -240,7 +245,7 @@ scene.add(cameraGroup)
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
-camera.position.z = 4
+camera.position.z = 20 //4
 scene.add(camera)
 
 
@@ -373,10 +378,7 @@ function handleWheel(event) {
     sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
     sectionMeshes = moveItems(sectionMeshes, false)
     
-
     
- 
-
   }else{  //scrolling up
     yPosition = -7;
     currentSection--;
@@ -386,12 +388,16 @@ function handleWheel(event) {
     sectionMeshes = moveItems(sectionMeshes, true)
   }
 
+  console.log("Mesh order: ");
+
+  sectionMeshes.forEach(function(entry) {
+    console.log(entry.name);
+  });
 
 
 //   instead of an arbitrary value for yPosition, we can use the sizes.height to get the correct value
 
   //move all of the mesh objects //TODO make them a group and move the entire group together?
-
   for(const mesh of sectionMeshes){
   console.log("position: " +  mesh.position.y);
 
@@ -425,9 +431,23 @@ function handleWheel(event) {
 
 function slideMeshOver(sectionId, xPosition) {  
 
+
     updateCursor(false); 
-    var meshClicked = sectionMeshes[sectionId]
-    console.log(meshClicked)
+
+    // console.log("section number: " + sectionId) 
+    var meshClicked; 
+
+    // instead of moving the index of this number just directly move this mesh 
+
+    if(sectionId == 0){
+        meshClicked = boxMesh
+    }else if(sectionId == 1){
+        meshClicked = coneMesh
+    }else{
+        meshClicked = torusKnotMesh
+    }
+
+    
     // move the object side to side for the project to show
     const targetPosition = new THREE.Vector3(xPosition, meshClicked.position.y, meshClicked.position.z);
 
@@ -451,16 +471,15 @@ function slide(sectionId) {
 
     var xPosition = 0;
 
-    console.log("sectionId in is: " + sectionId);
     var section = document.getElementById(sectionId);
-    
     
     if(projectOpen){
         
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
 
-        slideGroupToPosition(sectionId, new THREE.Vector3(10, -0.5, 0), 2500);
+        // Problem
+        slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -0.5, 0), 2500);
 
         // move section away first
         section.classList.toggle('slide-in');
@@ -481,7 +500,7 @@ function slide(sectionId) {
 
          // move mesh first
         slideMeshOver(sectionId,xPosition)
-        slideGroupToPosition(sectionId, new THREE.Vector3(2, -0.5, 0), 2000);
+        slideMeshGroupToPosition(sectionId, new THREE.Vector3(2, -0.5, 0), 2000);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
@@ -556,44 +575,42 @@ function onDocumentClick(event) {
     const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
 
-//TODO: problem lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
-
+//TODO: PROBLEM lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
     if (intersects1.length > 0) {
-        
+        console.log('Mesh 0 clicked!');
         slide("0");
-        
     }else if(intersects2.length > 0){
-        console.log('Mesh 2 clicked!');
+        console.log('Mesh 1 clicked!');
         slide("1");
     }else if(intersects3.length > 0){
-        console.log('Mesh 3 clicked!');
+        console.log('Mesh 2 clicked!');
         slide("2");
     }else{
-        console.log('clicked on nothing');
+        // console.log('clicked on nothing');
     }
 }
 
 
 function loadIconObject(fileLocation, groupName,positionArray){
 
-gltfLoader.load(
-    fileLocation,
-    (gltf) => {
-        var object = gltf.scene;
-        object.position.set(positionArray[0], positionArray[1], positionArray[2])
-        groupName.add(object)
-})
+    gltfLoader.load(
+        fileLocation,
+        (gltf) => {
+            var object = gltf.scene;
+            object.position.set(positionArray[0], positionArray[1], positionArray[2])
+            groupName.add(object)
+    })
 
 }
 
 
-function slideGroupToPosition(sectionNumber, targetPosition, duration) {
+function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
     
     var group;
 
-    if(sectionNumber == 0){
-        group = techGroup0
-    }else if(sectionNumber == 1){
+    if(sectionMeshes[sectionNumber].name == "project0"){
+        group = techGroup0 
+    }else if(sectionMeshes[sectionNumber].name == "project1"){
         group = techGroup1
     }else{
         group = techGroup2
@@ -648,8 +665,6 @@ function slideGroupToPosition(sectionNumber, targetPosition, duration) {
     if(hovering){
         cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
         cursor.style.transform = 'scale(2)'; // Example: scale cursor size
-
-        console.log("projectOpen: " + projectOpen);
 
         cursorIconLock.style.display = projectOpen ? 'block' : 'none';
         cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
