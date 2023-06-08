@@ -41,7 +41,7 @@
 }
 
 html{
-    background-color: #353535;
+    background-color: #0C0C0E;
 }
 
 
@@ -67,7 +67,6 @@ html{
     align-items: center;
     font-family: 'Cabin', sans-serif;
     color: #ffeded;
-    text-transform: uppercase;
     font-size: 4vmin;
      /* Slide */
     transition: transform 0.5s, opacity 0.5s;
@@ -108,17 +107,15 @@ h1{
   display: inline-block;
   padding: 0.25em 0.4em; /* Adjust padding values to make the button smaller */
   font-size: 20px;
-  background-color: #4a5568;
-  color: white;
+  font-weight: 700;
+  background-color: yellow;
+  color: black;
   text-decoration: none;
   border-radius: 0.25rem;
   transition: background-color 0.3s ease;
+  margin-top: 250px;
 }
 
 .btn:hover {
-  background-color: #2d3748;
-}
-
-.btn:hover {
-  background-color: #2d3748;
+  background-color: rgb(70, 65, 23);
 }

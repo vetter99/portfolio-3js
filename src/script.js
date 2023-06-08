@@ -14,7 +14,7 @@ const gltfLoader = new GLTFLoader()
  * Debug
  */
 const gui = new dat.GUI()
-gui.hide();
+// gui.hide();
 
 const parameters = {
     materialColor: '#ffeded'
@@ -41,7 +41,7 @@ var javascriptObject;
 
 // object group
 const techGroup0 = new THREE.Group()
-techGroup0.position.set(10, -0.5, 0);
+techGroup0.position.set(10, -10, 0);
 techGroup0.rotation.set(0,4.5, 0); // Set the desired rotation angles  
 techGroup0.scale.set(0.4,0.4,0.4)
 scene.add(techGroup0)
@@ -52,10 +52,8 @@ loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
 loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
 
 
-
-
 const techGroup1 = new THREE.Group()
-techGroup1.position.set(10, -0.5, 0);
+techGroup1.position.set(10, -10, 0);
 techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
 techGroup1.scale.set(0.4,0.4,0.4)
 scene.add(techGroup1)
@@ -64,7 +62,7 @@ loadIconObject("/objects/java.glb",techGroup1,[0, 0, -2.5]);
 
 
 const techGroup2 = new THREE.Group()
-techGroup2.position.set(10, -0.5, 0);
+techGroup2.position.set(10, -10, 0);
 techGroup2.rotation.set(0,4.5, 0); // Set the desired rotation angles  
 techGroup2.scale.set(0.4,0.4,0.4)
 scene.add(techGroup2)
@@ -121,13 +119,25 @@ var sectionMeshes = [ boxMesh, coneMesh, torusKnotMesh ]
  * Lights
  */
 
+const pointLight = new THREE.PointLight('white', 1, 7)
+pointLight.castShadow = true
+pointLight.shadow.mapSize.width = 256
+pointLight.shadow.mapSize.height = 256
+pointLight.shadow.camera.far = 7
+scene.add(pointLight);
+
+// point light helper
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2);
+scene.add(pointLightHelper) //TODO
+
+
 // Ambient light
 const ambientLight = new THREE.AmbientLight('#b9d5ff', 0.5)
 gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('ambientIntensity');
 scene.add(ambientLight)
 
 // // Directional light
-const moonLight = new THREE.DirectionalLight('#b9d5ff', 1)
+const moonLight = new THREE.DirectionalLight('#b9d5ff', 10)
 moonLight.castShadow = true
 moonLight.shadow.mapSize.width = 256
 moonLight.shadow.mapSize.height = 256
@@ -144,7 +154,7 @@ scene.add(moonLight)
 
 // // add directional light helper
 const moonLightHelper = new THREE.DirectionalLightHelper(moonLight, 0.2);
-scene.add(moonLightHelper)
+scene.add(moonLightHelper) //TODO 
 
 
 const doorLight = new THREE.PointLight('#ff7d46', 5,4)
@@ -245,7 +255,7 @@ scene.add(cameraGroup)
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
-camera.position.z = 20 //4
+camera.position.z = 4 //4
 scene.add(camera)
 
 
@@ -309,9 +319,6 @@ const tick = () =>
     // const parallaxY = - cursor.y * 0.5
     // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
     // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
-    // if (javascriptObject){
-    //     javascriptObject.rotation.y += deltaTime * 0.4
-    // } 
     
 
     // Animate meshes
@@ -479,7 +486,7 @@ function slide(sectionId) {
         xPosition = 0;
 
         // Problem
-        slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -0.5, 0), 2500);
+        slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -10, 0), 2500);
 
         // move section away first
         section.classList.toggle('slide-in');
@@ -500,7 +507,7 @@ function slide(sectionId) {
 
          // move mesh first
         slideMeshOver(sectionId,xPosition)
-        slideMeshGroupToPosition(sectionId, new THREE.Vector3(2, -0.5, 0), 2000);
+        slideMeshGroupToPosition(sectionId, new THREE.Vector3(2, 0.25, 0), 2000);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
