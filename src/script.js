@@ -38,22 +38,10 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 
-// Test
-const testGroup = new THREE.Group()
-testGroup.position.set(0, -1, 0);
-testGroup.rotation.set(0,0, 0); // Set the desired rotation angles 
-testGroup.scale.set(1.5,1.5,1.5)
-
-scene.add(testGroup)
-
-
-loadIconObject("/objects/testcase.glb",testGroup,[0, 0, 0]);
-
-
 // object group
 const techGroup0 = new THREE.Group()
 techGroup0.position.set(10, -10, 0);
-techGroup0.rotation.set(0,4.5, 0); // Set the desired rotation angles  
+techGroup0.rotation.set(0,4.5, 0);
 techGroup0.scale.set(0.25,0.25,0.25)
 scene.add(techGroup0)
 
@@ -62,25 +50,24 @@ scene.add(techGroup0)
 // loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
 // loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
 
-loadIconObject("/objects/cartridge.glb",techGroup0,[0, 0, -2.5]);
+// loadIconObject("/objects/cartridge.glb",techGroup0,[0, 0, -2.5]);
 
 const techGroup1 = new THREE.Group()
 techGroup1.position.set(10, -10, 0);
-techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
-// techGroup1.scale.set(25,25,25)
+techGroup1.rotation.set(0,6, 0); 
+techGroup1.scale.set(0.25,0.25,0.25)
 scene.add(techGroup1)
 
-loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
+loadIconObject("/objects/cartridge.glb",techGroup1,[0, -1, -2.5]);
 
 
 const techGroup2 = new THREE.Group()
 techGroup2.position.set(10, -10, 0);
-techGroup2.rotation.set(0,4.5, 0); // Set the desired rotation angles  
+techGroup2.rotation.set(0,4.5, 0);
 techGroup2.scale.set(5,5,5)
 scene.add(techGroup2)
 
-// loadIconObject("/objects/blender.glb",techGroup2,[0, 0, -2.5]);
-loadIconObject("/objects/cartridge.glb",techGroup2,[0, 0, -2.5]);
+// loadIconObject("/objects/carttest.glb",techGroup2,[0, 0, -2.5]);
 
 
 /**
@@ -105,11 +92,17 @@ const boxMesh = new THREE.Mesh(
 )
 boxMesh.name = "project0"
 
-const coneMesh = new THREE.Mesh(
-    new THREE.ConeGeometry(0.5, 1, 32),
-    material
-)
-coneMesh.name = "project1"
+
+// Mesh Group 1
+const meshGroup1 = new THREE.Group()
+meshGroup1.position.set(0, -10, 0);
+meshGroup1.rotation.set(0,0, 0); // Set the desired rotation angles 
+meshGroup1.scale.set(1.5,1.5,1.5)
+
+
+loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.5, 0]);
+
+meshGroup1.name = "project1"
 
 
 const torusKnotMesh = new THREE.Mesh(
@@ -120,66 +113,47 @@ torusKnotMesh.name = "project2"
 
 
 boxMesh.position.y = - objectsDistance * -1
-coneMesh.position.y = - objectsDistance * 0
+meshGroup1.position.y = - objectsDistance * 0
 torusKnotMesh.position.y = - objectsDistance * 1
 
-// scene.add(boxMesh, coneMesh, torusKnotMesh)
+scene.add(boxMesh,meshGroup1, torusKnotMesh)
 
-var sectionMeshes = [ boxMesh, testGroup, torusKnotMesh ]  
+var sectionMeshes = [ boxMesh, meshGroup1, torusKnotMesh ]  
 
 /**
  * Lights
  */
 
 // Ambient light
-const ambientLight = new THREE.AmbientLight('white', 1)
-scene.add(ambientLight)
-
-//spot light
-// const spotLight = new THREE.SpotLight(0xffffff, 100);
-// spotLight.position.set(0, 10, 0);
-// spotLight.castShadow = true;
-// scene.add(spotLight);
+// const ambientLight = new THREE.AmbientLight('white', 0)
+// scene.add(ambientLight)
 
 
-// // Directional light Left
-const directionalLightLeft = new THREE.DirectionalLight('white', 1)
-directionalLightLeft.castShadow = true
-directionalLightLeft.shadow.mapSize.width = 256
-directionalLightLeft.shadow.mapSize.height = 256
-directionalLightLeft.position.set(-5, 5, 0)
-scene.add(directionalLightLeft)
 
-// // add directional light helper
-const directionalLightHelperLeft = new THREE.DirectionalLightHelper(directionalLightLeft, 0.2);
-// scene.add(directionalLightHelperLeft) //TODO 
+// Directional light Top Right
+const directionalLightTopRight = new THREE.DirectionalLight('#b9d5ff', 1)
+directionalLightTopRight.position.set(3, 6, 8)
 
-// // Directional light Right
-const directionalLightRight = new THREE.DirectionalLight('#b9d5ff', 1)
-directionalLightRight.castShadow = true
-directionalLightRight.shadow.mapSize.width = 256
-directionalLightRight.shadow.mapSize.height = 256
-directionalLightRight.position.set(5, 5, 0)
-
-const directionalLightRightHelper = new THREE.DirectionalLightHelper(directionalLightRight, 0.2);
-// scene.add(directionalLightRightHelper) //TODO 
-// scene.add(directionalLightRight);
-
-// Directional light Top
-const directionalLightTop = new THREE.DirectionalLight('#b9d5ff', 0.5)
-directionalLightTop.castShadow = true
-directionalLightTop.shadow.mapSize.width = 256
-directionalLightTop.shadow.mapSize.height = 256
-directionalLightTop.position.set(0, 5, 5)
-directionalLightTop.shadow.camera.top = 3;
-directionalLightTop.shadow.camera.bottom = -3;
-directionalLightTop.shadow.camera.left = -3;
-directionalLightTop.shadow.camera.right = 3;
-// scene.add(directionalLightTop);
+const target = new THREE.Vector3(0, 2, 0); // Set the new target coordinates
+directionalLightTopRight.target.position.copy(target);
+scene.add(directionalLightTopRight);
 
 // Directional light Helper
-const directionalLightHelperTop = new THREE.DirectionalLightHelper(directionalLightTop, 0.2);
-// scene.add(directionalLightHelperTop) //TODO
+const directionalLightHelperTop = new THREE.DirectionalLightHelper(directionalLightTopRight, 0.2);
+// scene.add(directionalLightHelperTop)
+
+//Directional light Top Left
+const directionalLightTopLeft = new THREE.DirectionalLight('#b9d5ff', 1)
+directionalLightTopLeft.position.set(-3, 6, 8)
+
+
+directionalLightTopLeft.target.position.copy(target);
+scene.add(directionalLightTopLeft);
+
+
+// Directional light Helper
+const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(directionalLightTopLeft, 0.2);
+// scene.add(directionalLightHelperTopLeft) 
 
 
 /**
@@ -249,8 +223,8 @@ camera.position.z = 4 //4
 scene.add(camera)
 
 
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 
 
 /**
@@ -322,7 +296,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    // controls.update();
+    controls.update();
 
 
     // Call tick again on the next frame
@@ -436,7 +410,7 @@ function slideMeshOver(sectionId, xPosition) {
     if(sectionId == 0){
         meshClicked = boxMesh
     }else if(sectionId == 1){
-        meshClicked = testGroup
+        meshClicked = meshGroup1
     }else{
         meshClicked = torusKnotMesh
     }
@@ -539,7 +513,7 @@ function onMouseHoverObject(event) {
 
   // Calculate intersections with the mesh
   const intersects1 = raycaster.intersectObject(boxMesh);
-  const intersects2 = raycaster.intersectObject(testGroup);
+  const intersects2 = raycaster.intersectObject(meshGroup1);
   const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
   
@@ -564,7 +538,7 @@ function onDocumentClick(event) {
 
     // Calculate intersections with the mesh
     const intersects1 = raycaster.intersectObject(boxMesh);
-    const intersects2 = raycaster.intersectObject(testGroup);
+    const intersects2 = raycaster.intersectObject(meshGroup1);
     const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
 
