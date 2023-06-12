@@ -20,13 +20,13 @@ const parameters = {
     materialColor: '#ffeded'
 }
 
-gui
-    .addColor(parameters, 'materialColor')
-    .onChange(() =>
-    {
-        material.color.set(parameters.materialColor)
-        particlesMaterial.color.set(parameters.materialColor)
-    })
+// gui
+//     .addColor(parameters, 'materialColor')
+//     .onChange(() =>
+//     {
+//         material.color.set(parameters.materialColor)
+//         particlesMaterial.color.set(parameters.materialColor)
+//     })
 
 /**
  * Base
@@ -37,38 +37,50 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-var javascriptObject;
+
+// Test
+const testGroup = new THREE.Group()
+testGroup.position.set(0, -1, 0);
+testGroup.rotation.set(0,0, 0); // Set the desired rotation angles 
+testGroup.scale.set(1.5,1.5,1.5)
+
+scene.add(testGroup)
+
+
+loadIconObject("/objects/testcase.glb",testGroup,[0, 0, 0]);
+
 
 // object group
 const techGroup0 = new THREE.Group()
 techGroup0.position.set(10, -10, 0);
 techGroup0.rotation.set(0,4.5, 0); // Set the desired rotation angles  
-techGroup0.scale.set(0.4,0.4,0.4)
+techGroup0.scale.set(0.25,0.25,0.25)
 scene.add(techGroup0)
 
 // Load 3D objects into group
-loadIconObject("/objects/java.glb",techGroup0,[0, 0, -2.5]);
-loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
-loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
+// loadIconObject("/objects/java.glb",techGroup0,[0, 0, -2.5]);
+// loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
+// loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
 
+loadIconObject("/objects/cartridge.glb",techGroup0,[0, 0, -2.5]);
 
 const techGroup1 = new THREE.Group()
 techGroup1.position.set(10, -10, 0);
 techGroup1.rotation.set(0,4.5, 0); // Set the desired rotation angles  
-techGroup1.scale.set(0.4,0.4,0.4)
+// techGroup1.scale.set(25,25,25)
 scene.add(techGroup1)
 
-loadIconObject("/objects/java.glb",techGroup1,[0, 0, -2.5]);
+loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
 
 
 const techGroup2 = new THREE.Group()
 techGroup2.position.set(10, -10, 0);
 techGroup2.rotation.set(0,4.5, 0); // Set the desired rotation angles  
-techGroup2.scale.set(0.4,0.4,0.4)
+techGroup2.scale.set(5,5,5)
 scene.add(techGroup2)
 
-loadIconObject("/objects/blender.glb",techGroup2,[0, 0, -2.5]);
-
+// loadIconObject("/objects/blender.glb",techGroup2,[0, 0, -2.5]);
+loadIconObject("/objects/cartridge.glb",techGroup2,[0, 0, -2.5]);
 
 
 /**
@@ -111,86 +123,64 @@ boxMesh.position.y = - objectsDistance * -1
 coneMesh.position.y = - objectsDistance * 0
 torusKnotMesh.position.y = - objectsDistance * 1
 
-scene.add(boxMesh, coneMesh, torusKnotMesh)
+// scene.add(boxMesh, coneMesh, torusKnotMesh)
 
-var sectionMeshes = [ boxMesh, coneMesh, torusKnotMesh ]  
+var sectionMeshes = [ boxMesh, testGroup, torusKnotMesh ]  
 
 /**
  * Lights
  */
 
-const pointLight = new THREE.PointLight('white', 1, 7)
-pointLight.castShadow = true
-pointLight.shadow.mapSize.width = 256
-pointLight.shadow.mapSize.height = 256
-pointLight.shadow.camera.far = 7
-scene.add(pointLight);
-
-// point light helper
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2);
-scene.add(pointLightHelper) //TODO
-
-
 // Ambient light
-const ambientLight = new THREE.AmbientLight('#b9d5ff', 0.5)
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('ambientIntensity');
+const ambientLight = new THREE.AmbientLight('white', 1)
 scene.add(ambientLight)
 
-// // Directional light
-const moonLight = new THREE.DirectionalLight('#b9d5ff', 10)
-moonLight.castShadow = true
-moonLight.shadow.mapSize.width = 256
-moonLight.shadow.mapSize.height = 256
-moonLight.position.set(-5, 5, 0)
-// moonLight.shadow.camera.far = 100
-// moonLight.position.set(-4, 5, 0)
-// moonLight.lookAt = objectGroup;
-
-gui.add(moonLight, 'intensity').min(0).max(1).step(0.001).name('moonIntensity');
-gui.add(moonLight.position, 'x').min(- 5).max(5).step(0.001)
-gui.add(moonLight.position, 'y').min(- 5).max(5).step(0.001)
-gui.add(moonLight.position, 'z').min(- 10).max(10).step(0.001)
-scene.add(moonLight)
-
-// // add directional light helper
-const moonLightHelper = new THREE.DirectionalLightHelper(moonLight, 0.2);
-scene.add(moonLightHelper) //TODO 
+//spot light
+// const spotLight = new THREE.SpotLight(0xffffff, 100);
+// spotLight.position.set(0, 10, 0);
+// spotLight.castShadow = true;
+// scene.add(spotLight);
 
 
-const doorLight = new THREE.PointLight('#ff7d46', 5,4)
-doorLight.castShadow = true
-doorLight.shadow.mapSize.width = 256
-doorLight.shadow.mapSize.height = 256
-doorLight.shadow.camera.far = 7
-
-doorLight.position.set(-3, -0.5, -0.5)
-
-gui.add(doorLight, 'intensity').min(0).max(100).step(0.001).name('doorIntensity');
-gui.add(doorLight.position, 'x').min(- 5).max(5).step(0.001).name('doorX');
-gui.add(doorLight.position, 'y').min(- 5).max(5).step(0.001).name('doorY');
-gui.add(doorLight.position, 'z').min(- 5).max(5).step(0.001).name('doorZ');
-
-const doorLightHelper = new THREE.PointLightHelper(doorLight, 0.2)
-
-// objectGroup.add(doorLight)
-// objectGroup.add(doorLightHelper)
-// scene.add(doorLightHelper)
-// scene.add(doorLight)
-
-
-// const directionalLight = new THREE.DirectionalLight('#ffffff',10)
-// directionalLight.position.set(-5, 5,10)
+// // Directional light Left
+const directionalLightLeft = new THREE.DirectionalLight('white', 1)
+directionalLightLeft.castShadow = true
+directionalLightLeft.shadow.mapSize.width = 256
+directionalLightLeft.shadow.mapSize.height = 256
+directionalLightLeft.position.set(-5, 5, 0)
+scene.add(directionalLightLeft)
 
 // // add directional light helper
-// const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
-// const lightFolder = gui.addFolder('Directional Light');
-// lightFolder.add(directionalLight.position, 'x', -10, 10).name('Light X');
-// lightFolder.add(directionalLight.position, 'y', -10, 10).name('Light Y');
-// lightFolder.add(directionalLight.position, 'z', -10, 10).name('Light Z');
-// lightFolder.add(directionalLight, 'intensity', 0, 20).name('Intensity');
+const directionalLightHelperLeft = new THREE.DirectionalLightHelper(directionalLightLeft, 0.2);
+// scene.add(directionalLightHelperLeft) //TODO 
 
-// scene.add(directionalLightHelper)
-// scene.add(directionalLight)
+// // Directional light Right
+const directionalLightRight = new THREE.DirectionalLight('#b9d5ff', 1)
+directionalLightRight.castShadow = true
+directionalLightRight.shadow.mapSize.width = 256
+directionalLightRight.shadow.mapSize.height = 256
+directionalLightRight.position.set(5, 5, 0)
+
+const directionalLightRightHelper = new THREE.DirectionalLightHelper(directionalLightRight, 0.2);
+// scene.add(directionalLightRightHelper) //TODO 
+// scene.add(directionalLightRight);
+
+// Directional light Top
+const directionalLightTop = new THREE.DirectionalLight('#b9d5ff', 0.5)
+directionalLightTop.castShadow = true
+directionalLightTop.shadow.mapSize.width = 256
+directionalLightTop.shadow.mapSize.height = 256
+directionalLightTop.position.set(0, 5, 5)
+directionalLightTop.shadow.camera.top = 3;
+directionalLightTop.shadow.camera.bottom = -3;
+directionalLightTop.shadow.camera.left = -3;
+directionalLightTop.shadow.camera.right = 3;
+// scene.add(directionalLightTop);
+
+// Directional light Helper
+const directionalLightHelperTop = new THREE.DirectionalLightHelper(directionalLightTop, 0.2);
+// scene.add(directionalLightHelperTop) //TODO
+
 
 /**
  * Particles
@@ -217,7 +207,7 @@ const particlesMaterial = new THREE.PointsMaterial({
 
 // Particles
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-// scene.add(particles)
+scene.add(particles)
 
 /**
  * Sizes
@@ -320,12 +310,11 @@ const tick = () =>
     // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
     // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
     
-
     // Animate meshes
     for(const mesh of sectionMeshes)
     {
-        mesh.rotation.x += deltaTime * 0.4
-        mesh.rotation.y += deltaTime * 0.33
+        // mesh.rotation.x += deltaTime * 0.4
+        mesh.rotation.y += deltaTime * .75
     }
 
     TWEEN.update();
@@ -406,7 +395,7 @@ function handleWheel(event) {
 
   //move all of the mesh objects //TODO make them a group and move the entire group together?
   for(const mesh of sectionMeshes){
-  console.log("position: " +  mesh.position.y);
+  // console.log("position: " +  mesh.position.y);
 
     const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
 
@@ -438,18 +427,16 @@ function handleWheel(event) {
 
 function slideMeshOver(sectionId, xPosition) {  
 
-
     updateCursor(false); 
 
-    // console.log("section number: " + sectionId) 
+    console.log("section number: " + sectionId) 
     var meshClicked; 
 
     // instead of moving the index of this number just directly move this mesh 
-
     if(sectionId == 0){
         meshClicked = boxMesh
     }else if(sectionId == 1){
-        meshClicked = coneMesh
+        meshClicked = testGroup
     }else{
         meshClicked = torusKnotMesh
     }
@@ -485,7 +472,6 @@ function slide(sectionId) {
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
 
-        // Problem
         slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -10, 0), 2500);
 
         // move section away first
@@ -553,7 +539,7 @@ function onMouseHoverObject(event) {
 
   // Calculate intersections with the mesh
   const intersects1 = raycaster.intersectObject(boxMesh);
-  const intersects2 = raycaster.intersectObject(coneMesh);
+  const intersects2 = raycaster.intersectObject(testGroup);
   const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
   
@@ -578,7 +564,7 @@ function onDocumentClick(event) {
 
     // Calculate intersections with the mesh
     const intersects1 = raycaster.intersectObject(boxMesh);
-    const intersects2 = raycaster.intersectObject(coneMesh);
+    const intersects2 = raycaster.intersectObject(testGroup);
     const intersects3 = raycaster.intersectObject(torusKnotMesh);
 
 
@@ -604,9 +590,11 @@ function loadIconObject(fileLocation, groupName,positionArray){
         fileLocation,
         (gltf) => {
             var object = gltf.scene;
+            
             object.position.set(positionArray[0], positionArray[1], positionArray[2])
             groupName.add(object)
     })
+
 
 }
 
