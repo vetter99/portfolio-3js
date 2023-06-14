@@ -105,20 +105,36 @@ loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.5, 0]);
 meshGroup1.name = "project1"
 
 
-const torusKnotMesh = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(0.4, 0.15, 100, 16),
-    material
+const boxMesh2 = new THREE.Mesh(
+  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
+  material
 )
-torusKnotMesh.name = "project2"
+boxMesh2.name = "project2"
+
+
+
+const boxMesh3 = new THREE.Mesh(
+  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
+  material
+)
+boxMesh3.name = "project3"
+
+
+const boxMesh4 = new THREE.Mesh(
+  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
+  material
+)
+boxMesh4.name = "project4"
+
 
 
 boxMesh.position.y = - objectsDistance * -1
 meshGroup1.position.y = - objectsDistance * 0
-torusKnotMesh.position.y = - objectsDistance * 1
+boxMesh2.position.y = - objectsDistance * 1
 
-scene.add(boxMesh,meshGroup1, torusKnotMesh)
+scene.add(boxMesh,meshGroup1, boxMesh2)
 
-var sectionMeshes = [ boxMesh, meshGroup1, torusKnotMesh ]  
+var sectionMeshes = [ boxMesh, meshGroup1, boxMesh2 ]  
 
 /**
  * Lights
@@ -412,7 +428,7 @@ function slideMeshOver(sectionId, xPosition) {
     }else if(sectionId == 1){
         meshClicked = meshGroup1
     }else{
-        meshClicked = torusKnotMesh
+        meshClicked = boxMesh2
     }
 
     
@@ -514,7 +530,7 @@ function onMouseHoverObject(event) {
   // Calculate intersections with the mesh
   const intersects1 = raycaster.intersectObject(boxMesh);
   const intersects2 = raycaster.intersectObject(meshGroup1);
-  const intersects3 = raycaster.intersectObject(torusKnotMesh);
+  const intersects3 = raycaster.intersectObject(boxMesh2);
 
   
   if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0) {
@@ -539,7 +555,7 @@ function onDocumentClick(event) {
     // Calculate intersections with the mesh
     const intersects1 = raycaster.intersectObject(boxMesh);
     const intersects2 = raycaster.intersectObject(meshGroup1);
-    const intersects3 = raycaster.intersectObject(torusKnotMesh);
+    const intersects3 = raycaster.intersectObject(boxMesh2);
 
 
 //TODO: PROBLEM lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
