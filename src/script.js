@@ -14,7 +14,7 @@ const gltfLoader = new GLTFLoader()
  * Debug
  */
 const gui = new dat.GUI()
-// gui.hide();
+gui.hide();
 
 const parameters = {
     materialColor: '#ffeded'
@@ -58,7 +58,7 @@ techGroup1.rotation.set(0,6, 0);
 techGroup1.scale.set(0.25,0.25,0.25)
 scene.add(techGroup1)
 
-loadIconObject("/objects/cartridge.glb",techGroup1,[0, -1, -2.5]);
+loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
 
 
 const techGroup2 = new THREE.Group()
@@ -223,8 +223,8 @@ camera.position.z = 4 //4
 scene.add(camera)
 
 
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
 
 /**
@@ -296,7 +296,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    controls.update();
+    // controls.update();
 
 
     // Call tick again on the next frame
@@ -463,7 +463,7 @@ function slide(sectionId) {
        
     }else{
         document.removeEventListener('wheel', handleWheel, true);
-        xPosition = -2;
+        xPosition = -2.5;
 
          // move mesh first
         slideMeshOver(sectionId,xPosition)
