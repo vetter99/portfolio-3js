@@ -95,12 +95,10 @@ boxMesh.name = "project0"
 
 // Mesh Group 1
 const meshGroup1 = new THREE.Group()
-meshGroup1.position.set(0, -10, 0);
-meshGroup1.rotation.set(0,0, 0); // Set the desired rotation angles 
 meshGroup1.scale.set(1.5,1.5,1.5)
 
 
-loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.5, 0]);
+loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.6, 0]);
 
 meshGroup1.name = "project1"
 
@@ -127,14 +125,16 @@ const boxMesh4 = new THREE.Mesh(
 boxMesh4.name = "project4"
 
 
-
+boxMesh4.position.y = - objectsDistance * -2
 boxMesh.position.y = - objectsDistance * -1
 meshGroup1.position.y = - objectsDistance * 0
 boxMesh2.position.y = - objectsDistance * 1
+boxMesh3.position.y = - objectsDistance * 2
 
-scene.add(boxMesh,meshGroup1, boxMesh2)
 
-var sectionMeshes = [ boxMesh, meshGroup1, boxMesh2 ]  
+scene.add(boxMesh,meshGroup1, boxMesh2, boxMesh3, boxMesh4)
+
+var sectionMeshes = [ boxMesh, meshGroup1, boxMesh2, boxMesh3, boxMesh4 ]  
 
 /**
  * Lights
@@ -427,8 +427,12 @@ function slideMeshOver(sectionId, xPosition) {
         meshClicked = boxMesh
     }else if(sectionId == 1){
         meshClicked = meshGroup1
-    }else{
+    }else if (sectionId == 2){
         meshClicked = boxMesh2
+    }else if (sectionId == 3){
+        meshClicked = boxMesh3
+    }else{
+        meshClicked = boxMesh4
     }
 
     
@@ -531,9 +535,10 @@ function onMouseHoverObject(event) {
   const intersects1 = raycaster.intersectObject(boxMesh);
   const intersects2 = raycaster.intersectObject(meshGroup1);
   const intersects3 = raycaster.intersectObject(boxMesh2);
-
+  const intersects4 = raycaster.intersectObject(boxMesh3);
+  const intersects5 = raycaster.intersectObject(boxMesh4);
   
-  if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0) {
+  if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0 || intersects4.length > 0 || intersects5.length > 0) {
         updateCursor(true); 
   }else{
 
@@ -556,7 +561,8 @@ function onDocumentClick(event) {
     const intersects1 = raycaster.intersectObject(boxMesh);
     const intersects2 = raycaster.intersectObject(meshGroup1);
     const intersects3 = raycaster.intersectObject(boxMesh2);
-
+    const intersects4 = raycaster.intersectObject(boxMesh3);
+    const intersects5 = raycaster.intersectObject(boxMesh4);
 
 //TODO: PROBLEM lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
     if (intersects1.length > 0) {
@@ -568,8 +574,14 @@ function onDocumentClick(event) {
     }else if(intersects3.length > 0){
         console.log('Mesh 2 clicked!');
         slide("2");
+    }else if(intersects4.length > 0){
+        console.log('Mesh 3 clicked!');
+        slide("3");
+    }else if(intersects5.length > 0){
+        console.log('Mesh 4 clicked!');
+        slide("4");
     }else{
-        // console.log('clicked on nothing');
+        console.log('No mesh clicked!');
     }
 }
 

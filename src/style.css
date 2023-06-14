@@ -6,10 +6,10 @@
     /* temp */
 }
 
-/* body {
+body {
     overflow-x: hidden;
     overflow-y: hidden;
-  } */
+  }
 
   header{
     pointer-events: all;
@@ -63,7 +63,7 @@ html{
     right: 0;
     padding-right: 150px;
     width: 50%;
-    height: 85vh;
+    height: 100vh;
     display: flex;
     justify-content: flex-end;    /* display to the right */
     align-items: center;
