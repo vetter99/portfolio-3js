@@ -95,8 +95,6 @@ boxMesh.name = "project0"
 
 // Mesh Group 1
 const meshGroup1 = new THREE.Group()
-meshGroup1.scale.set(1.5,1.5,1.5)
-
 
 loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.6, 0]);
 
@@ -210,6 +208,10 @@ const sizes = {
 window.addEventListener('resize', () =>
 {
 
+    console.log("RESIZING");
+
+    mobileResize();
+
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -284,6 +286,9 @@ window.addEventListener('mousemove', (event) => {
 const clock = new THREE.Clock()
 let previousTime = 0
 
+// initial
+mobileResize();
+
 const tick = () =>
 {
     
@@ -304,7 +309,7 @@ const tick = () =>
     for(const mesh of sectionMeshes)
     {
         // mesh.rotation.x += deltaTime * 0.4
-        mesh.rotation.y += deltaTime * .75
+        mesh.rotation.y += deltaTime * .6
     }
 
     TWEEN.update();
@@ -331,13 +336,10 @@ document.addEventListener('wheel', handleWheel, true);  //adding the wheel event
 
 var animationRunning = false;
 
-
-// 
-
 function handleWheel(event) {
+
+
 //   instead of removing the event listener and adding it back, we can just use a boolean to check if the animation is running
-
-
   if (animationRunning == false) {
 
   console.log("Trigger the mesh movement!");
@@ -415,7 +417,7 @@ function handleWheel(event) {
 
 }
 
-function slideMeshOver(sectionId, xPosition) {  
+function slideMeshOver(sectionId, xPosition, yPosition) {  
 
     updateCursor(false); 
 
@@ -437,7 +439,7 @@ function slideMeshOver(sectionId, xPosition) {
 
     
     // move the object side to side for the project to show
-    const targetPosition = new THREE.Vector3(xPosition, meshClicked.position.y, meshClicked.position.z);
+    const targetPosition = new THREE.Vector3(xPosition, isMobileSize ? yPosition : meshClicked.position.y, meshClicked.position.z);
 
     // Create a new Tween
     const tween = new TWEEN.Tween(meshClicked.position)
@@ -458,6 +460,9 @@ function slideMeshOver(sectionId, xPosition) {
 function slide(sectionId) {
 
     var xPosition = 0;
+    var yPosition = 0;
+
+    //  X position if on mobile always 0, but pass in Y position to move up slightly
 
     var section = document.getElementById(sectionId);
     
@@ -465,14 +470,16 @@ function slide(sectionId) {
         
         document.addEventListener('wheel', handleWheel, true);
         xPosition = 0;
+        yPosition = 0;
 
         slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -10, 0), 2500);
 
         // move section away first
         section.classList.toggle('slide-in');
 
+
         setTimeout(function() {
-            slideMeshOver(sectionId, xPosition)
+            slideMeshOver(sectionId, xPosition, yPosition)
            
             setTimeout(function() {
                 section.classList.toggle('visible');
@@ -483,11 +490,16 @@ function slide(sectionId) {
        
     }else{
         document.removeEventListener('wheel', handleWheel, true);
-        xPosition = -2.5;
+        
+        isMobileSize() ? xPosition = 0 : xPosition = -2.5;
+        isMobileSize() ? yPosition = 0.75 : yPosition = 0;
 
          // move mesh first
-        slideMeshOver(sectionId,xPosition)
-        slideMeshGroupToPosition(sectionId, new THREE.Vector3(2, 0.25, 0), 2000);
+        slideMeshOver(sectionId,xPosition, yPosition)
+
+        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-3,0) : new THREE.Vector3(2, -2, 0);
+
+        slideMeshGroupToPosition(sectionId, vectorPosition, 2000);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
@@ -557,32 +569,30 @@ function onDocumentClick(event) {
     // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
 
-    // Calculate intersections with the mesh
-    const intersects1 = raycaster.intersectObject(boxMesh);
-    const intersects2 = raycaster.intersectObject(meshGroup1);
-    const intersects3 = raycaster.intersectObject(boxMesh2);
-    const intersects4 = raycaster.intersectObject(boxMesh3);
-    const intersects5 = raycaster.intersectObject(boxMesh4);
-
-//TODO: PROBLEM lies here, if you click on mesh 1 the code below is assuming the that mesh 1 is the first mesh in the array, but it is not anymore, becuz array changes
-    if (intersects1.length > 0) {
+    if (raycaster.intersectObject(boxMesh).length > 0) {
         console.log('Mesh 0 clicked!');
         slide("0");
-    }else if(intersects2.length > 0){
+    }else if(raycaster.intersectObject(meshGroup1).length > 0){
         console.log('Mesh 1 clicked!');
         slide("1");
-    }else if(intersects3.length > 0){
+    }else if(raycaster.intersectObject(boxMesh2).length > 0){
         console.log('Mesh 2 clicked!');
         slide("2");
-    }else if(intersects4.length > 0){
+    }else if(raycaster.intersectObject(boxMesh3).length > 0){
         console.log('Mesh 3 clicked!');
         slide("3");
-    }else if(intersects5.length > 0){
+    }else if(raycaster.intersectObject(boxMesh4).length > 0){
         console.log('Mesh 4 clicked!');
         slide("4");
+    }
+    else if(raycaster.intersectObject(techGroup1).length > 0){
+      console.log('tech group 1 clicked... this is an entire group so cant pinpoint which cartridge was clicked...');
+      addFlipEffect(techGroup1);
     }else{
         console.log('No mesh clicked!');
     }
+
+
 }
 
 
@@ -672,3 +682,48 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
         cursorIconUnlock.style.display = 'none';
     }
   }
+
+
+
+
+  function mobileResize() {
+    if(window.innerWidth < 768){
+      meshGroup1.scale.set(1.25,1.25,1.25)
+      techGroup1.scale.set(0.20,0.20,0.20)
+    }else{
+      meshGroup1.scale.set(1.75,1.75,1.75)
+      techGroup1.scale.set(0.35,0.35,0.35)
+    }
+  }
+    
+  function isMobileSize() {
+    return window.innerWidth < 768;
+  }
+
+  function addFlipEffect(mesh) {
+    var startTime = Date.now();
+    var duration = 1500; // 1 second
+    
+    function update() {
+      var elapsed = Date.now() - startTime;
+      if (elapsed >= duration) {
+        // Stop the flip effect
+        mesh.rotation.y = 0; // Reset the mesh rotation
+        return;
+      }
+      
+      // Calculate the flip effect
+      var progress = elapsed / duration *2;
+      var angle = Math.PI * progress; // Rotate 180 degrees
+      
+      // Apply the flip effect to the mesh
+      mesh.rotation.x = angle;
+      
+      // Schedule the next update
+      requestAnimationFrame(update);
+    }
+    
+    // Start the flip effect
+    update();
+  }
+  
