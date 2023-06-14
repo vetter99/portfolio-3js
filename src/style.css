@@ -6,12 +6,16 @@
     /* temp */
 }
 
-body {
-    overflow-x: hidden;
-    overflow-y: hidden;
-  }
+html, body {
+  background-color: rgb(28, 28, 28);
+  overflow: hidden;
+}
 
-  header{
+body {
+  position: relative
+}
+
+header{
     pointer-events: all;
     cursor: auto;
     z-index: 9999;
@@ -29,6 +33,13 @@ body {
     border-radius: 50%;
     transition: transform 0.3s ease;
     z-index: 9999;
+
+
+    @media (max-width: 767px) {
+      width: 0px;
+      height: 0px;
+    }
+
 }
 
 .cursor-icon{
@@ -41,10 +52,6 @@ body {
   transform: translate(-50%, -50%);
 }
 
-html{
-    background-color: rgb(28, 28, 28);
-}
-
 
 /* turns on/off orbit controls... */
 .webgl
@@ -55,8 +62,28 @@ html{
     outline: none;
 }
 
-.section
-{  
+.title{
+
+  font-size: 60px;
+  font-weight: 600;
+  
+  @media (max-width: 767px) {
+    text-align: center;
+    font-size: 40px;
+  }
+
+}
+
+
+p{
+  @media (max-width: 767px) {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+
+.section{  
     visibility: hidden;
     position: absolute;
     top: 0;
@@ -69,12 +96,21 @@ html{
     align-items: center;
     font-family: 'Cabin', sans-serif;
     color: #ffeded;
-    font-size: 4vmin;
      /* Slide */
     transition: transform 0.5s, opacity 0.5s;
     opacity: 0;
     transform: translateX(50%);
     padding-bottom:100px;
+
+
+    @media (max-width: 767px) {
+      width: 100%;
+      padding: 10px;
+      justify-content: center;
+      top: 55%;
+      display: inline;
+    }
+
 }
 
 .visible{
@@ -90,7 +126,7 @@ html{
 
 #container {
     height: 100vh;
-    position: relative;
+    /* position: relative; */
     /* scroll-snap-type: y mandatory;  */
 }
 
