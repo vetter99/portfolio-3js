@@ -795,3 +795,49 @@ function showNextButton(show){
   //     document.getElementById("exit-button").style.display = "none";
   //   } 
   // }
+  const overlay = document.getElementById('overlay');
+  const content = document.getElementById('content');
+  const message = document.getElementById('message');
+  const text = `"Live in the future...then build what's missing"\n\nWelcome to the Vetter portfolio.`; // Multi-line HTML text
+  const typingSpeed = 100; // Speed of typing animation (in milliseconds)
+  
+  // Show overlay and start typewriter animation
+  overlay.style.display = 'flex';
+  typewriterEffect(text, message);
+  
+  // Function for typewriter animation
+  function typewriterEffect(text, element) {
+    const htmlLines = text.split('\n').map(line => line.trim()).filter(line => line !== '');
+    let lineIndex = 0;
+    let charIndex = 0;
+    element.innerHTML = ''; // Clear existing content
+  
+    function type() {
+      if (lineIndex < htmlLines.length) {
+        const currentLine = htmlLines[lineIndex];
+        if (charIndex < currentLine.length) {
+          if (currentLine.charAt(charIndex) === '\n') {
+            element.innerHTML += '<br><br>'; // Add an entire space between lines
+          } else {
+            element.innerHTML += currentLine.charAt(charIndex);
+          }
+          charIndex++;
+          setTimeout(type, typingSpeed);
+        } else {
+          lineIndex++;
+          charIndex = 0;
+          element.innerHTML += '<br><br>'; // Add an entire space between lines
+          setTimeout(type, typingSpeed);
+        }
+      } else {
+        // Hide overlay and show content after typing animation completes
+        setTimeout(() => {
+          overlay.classList.add('hide');
+          content.style.opacity = 1;
+        }, 1000); // Delay before hiding overlay (adjust as needed)
+      }
+    }
+  
+    type();
+  }
+  
