@@ -96,7 +96,7 @@ boxMesh.name = "project0"
 // Mesh Group 1
 const meshGroup1 = new THREE.Group()
 
-loadIconObject("/objects/testcase.glb",meshGroup1,[0, -0.6, 0]);
+loadIconObject("/objects/statefarm.glb",meshGroup1,[0, -0.6, 0]);
 
 meshGroup1.name = "project1"
 
@@ -366,7 +366,6 @@ function handleWheel(event) {
     sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
     sectionMeshes = moveItems(sectionMeshes, false)
     
-    
   }else{  //scrolling up
     yPosition = -7;
     currentSection--;
@@ -406,8 +405,6 @@ function handleWheel(event) {
       })
       .start(); // Start the animation
   }
-
-  console.log("Here after...") // this may need a delay to wait for the animation to finish
 
 
 
@@ -727,3 +724,37 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
     update();
   }
   
+
+
+function manualNextProject(){
+  console.log("HERE")
+  yPosition = 7;
+  currentSection++;
+
+  // move top most mesh instantly to the bottom.
+  sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
+  sectionMeshes = moveItems(sectionMeshes, false)
+
+  for(const mesh of sectionMeshes){
+    // console.log("position: " +  mesh.position.y);
+  
+      const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
+  
+      // Set up the animation
+      const duration = 1000; // Animation duration in milliseconds
+  
+  
+      // Create a new Tween
+      const tween = new TWEEN.Tween(mesh.position)
+        .to(targetPosition, duration)
+        .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
+        .onUpdate(() => {
+  
+          // Render the scene after each update
+          renderer.render(scene, camera);
+        })
+        .start(); // Start the animation
+    }
+
+    
+}
