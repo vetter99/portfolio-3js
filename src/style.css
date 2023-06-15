@@ -182,3 +182,8 @@ h1{
 .oval-button:hover {
   background-color: #2980b9;
 }
+
+.section h2{
+  font-size: 50px;
+  font-weight: 600;
+}

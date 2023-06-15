@@ -78,61 +78,55 @@ const textureLoader = new THREE.TextureLoader()
 const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
 gradientTexture.magFilter = THREE.NearestFilter
 
+
 // Material
 const material = new THREE.MeshToonMaterial({
     color: parameters.materialColor,
     gradientMap: gradientTexture
 })
 
+
 // Objects
 const objectsDistance = 7
-const boxMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
-    material
-)
-boxMesh.name = "project0"
 
 
-// Mesh Group 1
+const meshGroup0 = new THREE.Group()
+
+loadIconObject("/objects/permission.glb",meshGroup0,[0, -0.6, 0]);
+
+meshGroup0.name = "project0"
+
 const meshGroup1 = new THREE.Group()
 
-loadIconObject("/objects/statefarm.glb",meshGroup1,[0, -0.6, 0]);
+loadIconObject("/objects/entoraj.glb",meshGroup1,[0, -0.6, 0]);
 
 meshGroup1.name = "project1"
 
 
-const boxMesh2 = new THREE.Mesh(
-  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
-  material
-)
-boxMesh2.name = "project2"
+const meshGroup2 = new THREE.Group()
+
+loadIconObject("/objects/hero.glb",meshGroup2,[0, -0.6, 0]);
+
+meshGroup2.name = "project2"
+
+
+const meshGroup3 = new THREE.Group()
+
+loadIconObject("/objects/statefarm.glb",meshGroup3,[0, -0.6, 0]);
+
+meshGroup3.name = "project3"
 
 
 
-const boxMesh3 = new THREE.Mesh(
-  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
-  material
-)
-boxMesh3.name = "project3"
-
-
-const boxMesh4 = new THREE.Mesh(
-  new THREE.BoxGeometry(0.5,0.5,0.5, 32, 32, 32),
-  material
-)
-boxMesh4.name = "project4"
-
-
-boxMesh4.position.y = - objectsDistance * -2
-boxMesh.position.y = - objectsDistance * -1
+meshGroup0.position.y = - objectsDistance * -1
 meshGroup1.position.y = - objectsDistance * 0
-boxMesh2.position.y = - objectsDistance * 1
-boxMesh3.position.y = - objectsDistance * 2
+meshGroup2.position.y = - objectsDistance * 1
+meshGroup3.position.y = - objectsDistance * 2
 
 
-scene.add(boxMesh,meshGroup1, boxMesh2, boxMesh3, boxMesh4)
+scene.add(meshGroup0,meshGroup1, meshGroup2, meshGroup3)
 
-var sectionMeshes = [ boxMesh, meshGroup1, boxMesh2, boxMesh3, boxMesh4 ]  
+var sectionMeshes = [ meshGroup0, meshGroup1, meshGroup2, meshGroup3 ]  
 
 /**
  * Lights
@@ -423,15 +417,15 @@ function slideMeshOver(sectionId, xPosition, yPosition) {
 
     // instead of moving the index of this number just directly move this mesh 
     if(sectionId == 0){
-        meshClicked = boxMesh
+        meshClicked = meshGroup0
     }else if(sectionId == 1){
         meshClicked = meshGroup1
     }else if (sectionId == 2){
-        meshClicked = boxMesh2
+        meshClicked = meshGroup2
     }else if (sectionId == 3){
-        meshClicked = boxMesh3
+        meshClicked = meshGroup3
     }else{
-        meshClicked = boxMesh4
+        // meshClicked = boxMesh4
     }
 
     
@@ -541,13 +535,12 @@ function onMouseHoverObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   // Calculate intersections with the mesh
-  const intersects1 = raycaster.intersectObject(boxMesh);
+  const intersects1 = raycaster.intersectObject(meshGroup0);
   const intersects2 = raycaster.intersectObject(meshGroup1);
-  const intersects3 = raycaster.intersectObject(boxMesh2);
-  const intersects4 = raycaster.intersectObject(boxMesh3);
-  const intersects5 = raycaster.intersectObject(boxMesh4);
+  const intersects3 = raycaster.intersectObject(meshGroup2);
+  const intersects4 = raycaster.intersectObject(meshGroup3);
   
-  if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0 || intersects4.length > 0 || intersects5.length > 0) {
+  if (intersects1.length > 0 || intersects2.length > 0 || intersects3.length > 0 || intersects4.length > 0) {
         updateCursor(true); 
   }else{
 
@@ -566,21 +559,18 @@ function onDocumentClick(event) {
     // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
 
-    if (raycaster.intersectObject(boxMesh).length > 0) {
+    if (raycaster.intersectObject(meshGroup0).length > 0) {
         console.log('Mesh 0 clicked!');
         slide("0");
     }else if(raycaster.intersectObject(meshGroup1).length > 0){
         console.log('Mesh 1 clicked!');
         slide("1");
-    }else if(raycaster.intersectObject(boxMesh2).length > 0){
+    }else if(raycaster.intersectObject(meshGroup2).length > 0){
         console.log('Mesh 2 clicked!');
         slide("2");
-    }else if(raycaster.intersectObject(boxMesh3).length > 0){
+    }else if(raycaster.intersectObject(meshGroup3).length > 0){
         console.log('Mesh 3 clicked!');
         slide("3");
-    }else if(raycaster.intersectObject(boxMesh4).length > 0){
-        console.log('Mesh 4 clicked!');
-        slide("4");
     }
     else if(raycaster.intersectObject(techGroup1).length > 0){
       console.log('tech group 1 clicked... this is an entire group so cant pinpoint which cartridge was clicked...');
@@ -685,10 +675,16 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
 
   function mobileResize() {
     if(window.innerWidth < 768){
+      meshGroup0.scale.set(1.25,1.25,1.25)
       meshGroup1.scale.set(1.25,1.25,1.25)
+      meshGroup2.scale.set(1.25,1.25,1.25)
+      meshGroup3.scale.set(1.25,1.25,1.25)
       techGroup1.scale.set(0.20,0.20,0.20)
     }else{
+      meshGroup0.scale.set(1.75,1.75,1.75)
       meshGroup1.scale.set(1.75,1.75,1.75)
+      meshGroup2.scale.set(1.75,1.75,1.75)
+      meshGroup3.scale.set(1.75,1.75,1.75)
       techGroup1.scale.set(0.35,0.35,0.35)
     }
   }
