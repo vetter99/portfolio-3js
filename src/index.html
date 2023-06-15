@@ -38,14 +38,14 @@
     </div>
   </header>
 
-  <div class="oval-button" onClick="manualNextProject()">Next</div>
+
   
     <canvas class="webgl"></canvas>
 
     <div id="container">
       <div id="cursor">
-        <span id="cursor-icon-unlock" class="cursor-icon fa-solid fa-unlock"></span>
-        <span id="cursor-icon-lock" class="cursor-icon fa-solid fa-lock"></span>
+        <span id="cursor-icon-unlock" class="cursor-icon fa-solid fa-plus"></span>
+        <span id="cursor-icon-lock" class="cursor-icon fa-solid fa-xmark"></span>
       </div>
       
       <section id="0" class="section">
@@ -118,7 +118,17 @@
 
     </div> 
 
+    <div id = "next-button" class="oval-button">Next</div>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="./script.js"></script>
+
+    <!-- Partially Complete -->
+    <!-- <div id = "exit-button" class="button-wrapper">
+      <button class="exit-button">
+        <i style = "color: black" class="fas fa-times"></i>
+      </button>
+    </div> -->
+    
 </body>
 </html>

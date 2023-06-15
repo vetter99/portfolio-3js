@@ -4,6 +4,12 @@ import gsap from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import TWEEN from 'tween.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
+import Stats from 'stats.js'
+
+const stats = new Stats()
+stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
+
 
 var projectOpen = false;
 
@@ -167,29 +173,29 @@ const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(direction
 /**
  * Particles
  */
-const particlesCount = 200
-const positions = new Float32Array(particlesCount * 3)
+// const particlesCount = 200
+// const positions = new Float32Array(particlesCount * 3)
 
-for(let i = 0; i < particlesCount; i++)
-{
-    positions[i * 3 + 0] = (Math.random() - 0.5) * 10
-    positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
-}
+// for(let i = 0; i < particlesCount; i++)
+// {
+//     positions[i * 3 + 0] = (Math.random() - 0.5) * 10
+//     positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
+//     positions[i * 3 + 2] = (Math.random() - 0.5) * 10
+// }
 
-const particlesGeometry = new THREE.BufferGeometry()
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+// const particlesGeometry = new THREE.BufferGeometry()
+// particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
 
-// Material
-const particlesMaterial = new THREE.PointsMaterial({
-    color: parameters.materialColor,
-    sizeAttenuation: textureLoader,
-    size: 0.03
-})
+// // Material
+// const particlesMaterial = new THREE.PointsMaterial({
+//     color: parameters.materialColor,
+//     sizeAttenuation: textureLoader,
+//     size: 0.03
+// })
 
-// Particles
-const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+// // Particles
+// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+// scene.add(particles)
 
 /**
  * Sizes
@@ -285,7 +291,9 @@ mobileResize();
 
 const tick = () =>
 {
-    
+  stats.begin()
+
+
 
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
@@ -316,6 +324,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+    stats.end()
 }
 
 tick()
@@ -336,8 +345,7 @@ function handleWheel(event) {
 //   instead of removing the event listener and adding it back, we can just use a boolean to check if the animation is running
   if (animationRunning == false) {
 
-  console.log("Trigger the mesh movement!");
-  animationRunning = true;
+    animationRunning = true;
 
 
     setTimeout(function() {
@@ -369,11 +377,10 @@ function handleWheel(event) {
     sectionMeshes = moveItems(sectionMeshes, true)
   }
 
-  console.log("Mesh order: ");
-
-  sectionMeshes.forEach(function(entry) {
-    console.log(entry.name);
-  });
+  // console.log("Mesh order: ");
+  // sectionMeshes.forEach(function(entry) {
+  //   console.log(entry.name);
+  // });
 
 
 //   instead of an arbitrary value for yPosition, we can use the sizes.height to get the correct value
@@ -412,7 +419,6 @@ function slideMeshOver(sectionId, xPosition, yPosition) {
 
     updateCursor(false); 
 
-    console.log("section number: " + sectionId) 
     var meshClicked; 
 
     // instead of moving the index of this number just directly move this mesh 
@@ -457,6 +463,8 @@ function slide(sectionId) {
 
     var section = document.getElementById(sectionId);
     
+    // showExitButton(projectOpen);
+
     if(projectOpen){
         
         document.addEventListener('wheel', handleWheel, true);
@@ -464,6 +472,8 @@ function slide(sectionId) {
         yPosition = 0;
 
         slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -10, 0), 2500);
+       
+        showNextButton(true);
 
         // move section away first
         section.classList.toggle('slide-in');
@@ -491,6 +501,8 @@ function slide(sectionId) {
         const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-3,0) : new THREE.Vector3(2, -2, 0);
 
         slideMeshGroupToPosition(sectionId, vectorPosition, 2000);
+
+        showNextButton(false);
 
         setTimeout(function() {
             section.classList.toggle('slide-in');
@@ -560,16 +572,12 @@ function onDocumentClick(event) {
     raycaster.setFromCamera(mouse, camera);
 
     if (raycaster.intersectObject(meshGroup0).length > 0) {
-        console.log('Mesh 0 clicked!');
         slide("0");
     }else if(raycaster.intersectObject(meshGroup1).length > 0){
-        console.log('Mesh 1 clicked!');
         slide("1");
     }else if(raycaster.intersectObject(meshGroup2).length > 0){
-        console.log('Mesh 2 clicked!');
         slide("2");
     }else if(raycaster.intersectObject(meshGroup3).length > 0){
-        console.log('Mesh 3 clicked!');
         slide("3");
     }
     else if(raycaster.intersectObject(techGroup1).length > 0){
@@ -720,37 +728,70 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
     update();
   }
   
-
-
-function manualNextProject(){
-  console.log("HERE")
-  yPosition = 7;
-  currentSection++;
-
-  // move top most mesh instantly to the bottom.
-  sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
-  sectionMeshes = moveItems(sectionMeshes, false)
-
-  for(const mesh of sectionMeshes){
-    // console.log("position: " +  mesh.position.y);
-  
-      const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
-  
-      // Set up the animation
-      const duration = 1000; // Animation duration in milliseconds
-  
-  
-      // Create a new Tween
-      const tween = new TWEEN.Tween(mesh.position)
-        .to(targetPosition, duration)
-        .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
-        .onUpdate(() => {
-  
-          // Render the scene after each update
-          renderer.render(scene, camera);
-        })
-        .start(); // Start the animation
-    }
-
-    
+function showNextButton(show){
+  if(show){
+    document.getElementById("next-button").style.display = "block";
+  }else{
+    document.getElementById("next-button").style.display = "none";
+  } 
 }
+
+
+  const ovalButton = document.querySelector('.oval-button');
+  
+  // Add an event listener for the "click" event
+  ovalButton.addEventListener('click', function (){
+    manualNextProject();
+  });
+  
+  // Function to handle the click event
+  function manualNextProject() {
+
+    var yPosition = 0;
+
+    yPosition = 7;
+    currentSection++;
+  
+    // move top most mesh instantly to the bottom.
+    sectionMeshes[0].position.y = sectionMeshes[sectionMeshes.length - 1].position.y - yPosition;
+    sectionMeshes = moveItems(sectionMeshes, false)
+  
+    for(const mesh of sectionMeshes){
+      // console.log("position: " +  mesh.position.y);
+    
+        const targetPosition = new THREE.Vector3(0, mesh.position.y + yPosition, 0);
+    
+        // Set up the animation
+        const duration = 1000; // Animation duration in milliseconds
+    
+        // Create a new Tween
+        const tween = new TWEEN.Tween(mesh.position)
+          .to(targetPosition, duration)
+          .easing(TWEEN.Easing.Quadratic.InOut) // Choose the easing function for the animation
+          .onUpdate(() => {
+    
+            // Render the scene after each update
+            renderer.render(scene, camera);
+          })
+          .start(); // Start the animation
+     }
+  }
+
+
+  // Partially Complete
+  // const exitButton = document.querySelector('.exit-button');
+  
+  // Add an event listener for the "click" event
+  // exitButton.addEventListener('click', function (){
+  //   // close project
+  // });
+
+
+  // function showExitButton(show){
+  //   console.log("Here");
+  //   if(!show){
+  //     document.getElementById("exit-button").style.display = "block";
+  //   }else{
+  //     document.getElementById("exit-button").style.display = "none";
+  //   } 
+  // }
