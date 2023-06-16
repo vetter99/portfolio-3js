@@ -789,8 +789,8 @@ function showNextButton(show){
   const overlay = document.getElementById('overlay');
   const content = document.getElementById('content');
   const message = document.getElementById('message');
-  const text = `"Live in the future...then build what's missing"\n\nWelcome to the Vetter portfolio.`; // Multi-line HTML text
-  const typingSpeed = 100; // Speed of typing animation (in milliseconds)
+  const text = `"Live in the future...then build what's missing"\n\nWelcome to my portfolio.`; // Multi-line HTML text
+  const typingSpeed = 75; // Speed of typing animation (in milliseconds)
   
   // Show overlay and start typewriter animation
   overlay.style.display = 'flex';
