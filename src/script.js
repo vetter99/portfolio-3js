@@ -6,11 +6,6 @@ import TWEEN from 'tween.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import Stats from 'stats.js'
 
-const stats = new Stats()
-stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild(stats.dom)
-
-
 var projectOpen = false;
 
 const gltfLoader = new GLTFLoader()
@@ -291,9 +286,6 @@ mobileResize();
 
 const tick = () =>
 {
-  stats.begin()
-
-
 
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
@@ -324,7 +316,6 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-    stats.end()
 }
 
 tick()
