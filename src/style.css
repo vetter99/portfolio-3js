@@ -17,7 +17,6 @@ body {
 
 header{
     pointer-events: all;
-    cursor: auto;
     z-index: 5;
     position: fixed;
     top: 0;
@@ -153,7 +152,11 @@ h1{
 }
 
 .btn:hover {
-  background-color: rgb(70, 65, 23);
+
+  @media (min-width: 768px) {
+    background-color: rgb(70, 65, 23);
+  }
+
 }
 
 
@@ -178,7 +181,11 @@ h1{
 }
 
 .oval-button:hover {
-  background-color: white;
+  
+  @media (min-width: 768px) {
+    background-color: white;
+  }
+
 }
 
 .section h2{
@@ -241,7 +248,7 @@ h1{
 }
 
 #content {
-  opacity: 0;
+  opacity: 0;  
   transition: opacity 1s ease;
 }
 

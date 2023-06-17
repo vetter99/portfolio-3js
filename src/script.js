@@ -4,7 +4,10 @@ import gsap from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import TWEEN from 'tween.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
-import Stats from 'stats.js'
+
+// Create a frustum object based on the camera's projection matrix
+const frustum = new THREE.Frustum();
+const cameraViewProjectionMatrix = new THREE.Matrix4();
 
 var projectOpen = false;
 
@@ -59,7 +62,7 @@ techGroup1.rotation.set(0,6, 0);
 techGroup1.scale.set(0.25,0.25,0.25)
 scene.add(techGroup1)
 
-loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
+// loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
 
 
 const techGroup2 = new THREE.Group()
@@ -75,25 +78,47 @@ scene.add(techGroup2)
  * Objects
  */
 // Texture
-const textureLoader = new THREE.TextureLoader()
-const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
-gradientTexture.magFilter = THREE.NearestFilter
+// const textureLoader = new THREE.TextureLoader()
+// const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
+// gradientTexture.magFilter = THREE.NearestFilter
 
 
-// Material
-const material = new THREE.MeshToonMaterial({
-    color: parameters.materialColor,
-    gradientMap: gradientTexture
-})
+// // Material
+// const material = new THREE.MeshToonMaterial({
+//     color: parameters.materialColor,
+//     gradientMap: gradientTexture
+// })
 
 
 // Objects
 const objectsDistance = 7
 
+var object1; 
+
+function loadGLBModel(url) {
+  return new Promise((resolve, reject) => {
+    gltfLoader.load(url, resolve, undefined, reject);
+  });
+}
+
+// loadGLBModel("/objects/permission.glb")
+//   .then((gltf) => {
+//     object1 = gltf.scene;
+//     object1.position.set(2, -1, 0);
+//     object1.scale.set(1.75, 1.75, 1.75);
+//     scene.add(object1);
+//     console.log(object1);
+//   })
+//   .catch((error) => {
+//     console.error("Error loading GLB model:", error);
+//   });
+
+  
 
 const meshGroup0 = new THREE.Group()
 
 loadIconObject("/objects/permission.glb",meshGroup0,[0, -0.6, 0]);
+
 
 meshGroup0.name = "project0"
 
@@ -245,11 +270,9 @@ scene.add(camera)
  */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
-    alpha: true
+    powerPreference: "high-performance"
 })
 
-renderer.shadowMap.enabled = true
-renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 // renderer.antialias = true;
@@ -291,18 +314,9 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
-    // // Animate camera
-    // camera.position.y = - scrollY / sizes.height * objectsDistance
-
-    // const parallaxX = cursor.x * 0.5
-    // const parallaxY = - cursor.y * 0.5
-    // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
-    // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
-    
-    // Animate meshes
+    // // Animate meshes
     for(const mesh of sectionMeshes)
     {
-        // mesh.rotation.x += deltaTime * 0.4
         mesh.rotation.y += deltaTime * .6
     }
 
@@ -319,6 +333,8 @@ const tick = () =>
 }
 
 tick()
+
+
 
 
 /**
@@ -401,7 +417,7 @@ function handleWheel(event) {
 
 
 }else{
-    console.log("DONT trigger the mesh movement")
+    // console.log("DONT trigger the mesh movement")
 }
 
 }
@@ -572,10 +588,10 @@ function onDocumentClick(event) {
         slide("3");
     }
     else if(raycaster.intersectObject(techGroup1).length > 0){
-      console.log('tech group 1 clicked... this is an entire group so cant pinpoint which cartridge was clicked...');
+      // console.log('tech group 1 clicked... this is an entire group so cant pinpoint which cartridge was clicked...');
       addFlipEffect(techGroup1);
     }else{
-        console.log('No mesh clicked!');
+        // console.log('No mesh clicked!');
     }
 
 
@@ -595,6 +611,21 @@ function loadIconObject(fileLocation, groupName,positionArray){
 
 
 }
+
+
+function loadIconObjectNEW(fileLocation){
+
+  gltfLoader.load(
+      fileLocation,
+      (gltf) => {
+          var object = gltf.scene;
+          console.log(object)
+          return object;
+  })
+
+
+}
+
 
 
 function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
@@ -654,19 +685,23 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
 
   function updateCursor(hovering){
 
+    if(!isMobileSize()){
 
-    if(hovering){
-        cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
-        cursor.style.transform = 'scale(2)'; // Example: scale cursor size
+      if(hovering){
+          cursor.style.backgroundColor = 'yellow'; // Change cursor color to red
+          cursor.style.transform = 'scale(2)'; // Example: scale cursor size
 
-        cursorIconLock.style.display = projectOpen ? 'block' : 'none';
-        cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
-    }else{
-        cursor.style.backgroundColor = 'white'; // Change cursor color to red
-        cursor.style.transform = 'scale(1)'; // Example: scale cursor size
-        cursorIconLock.style.display = 'none';
-        cursorIconUnlock.style.display = 'none';
-    }
+          cursorIconLock.style.display = projectOpen ? 'block' : 'none';
+          cursorIconUnlock.style.display = projectOpen ? 'none' : 'block';
+      }else{
+          cursor.style.backgroundColor = 'white'; // Change cursor color to red
+          cursor.style.transform = 'scale(1)'; // Example: scale cursor size
+          cursorIconLock.style.display = 'none';
+          cursorIconUnlock.style.display = 'none';
+      }
+
+  }
+
   }
 
 
@@ -786,6 +821,8 @@ function showNextButton(show){
   //     document.getElementById("exit-button").style.display = "none";
   //   } 
   // }
+
+  // Overlay
   const overlay = document.getElementById('overlay');
   const content = document.getElementById('content');
   const message = document.getElementById('message');
@@ -831,4 +868,3 @@ function showNextButton(show){
   
     type();
   }
-  
