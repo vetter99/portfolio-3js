@@ -10,6 +10,8 @@ const frustum = new THREE.Frustum();
 const cameraViewProjectionMatrix = new THREE.Matrix4();
 
 var projectOpen = false;
+var openSection = 1;
+
 
 const gltfLoader = new GLTFLoader()
 
@@ -340,7 +342,7 @@ tick()
 /**
  * Scroll
  */
-let currentSection = 0
+let currentSection = 1
 
 document.addEventListener('wheel', handleWheel, true);  //adding the wheel event listener from the start
 
@@ -463,6 +465,7 @@ function slideMeshOver(sectionId, xPosition, yPosition) {
   // slide section to the side
 function slide(sectionId) {
 
+    openSection = sectionId;
     var xPosition = 0;
     var yPosition = 0;
 
@@ -470,7 +473,7 @@ function slide(sectionId) {
 
     var section = document.getElementById(sectionId);
     
-    // showExitButton(projectOpen);
+    if(isMobileSize()) showExitButton(projectOpen);
 
     if(projectOpen){
         
@@ -805,22 +808,20 @@ function showNextButton(show){
 
 
   // Partially Complete
-  // const exitButton = document.querySelector('.exit-button');
-  
-  // Add an event listener for the "click" event
-  // exitButton.addEventListener('click', function (){
-  //   // close project
-  // });
+  const exitButton = document.querySelector('.exit-button');
+  exitButton.addEventListener('click', function (){
+    // close project
+    slide(openSection); //need to keep track of open section number?
+  });
 
 
-  // function showExitButton(show){
-  //   console.log("Here");
-  //   if(!show){
-  //     document.getElementById("exit-button").style.display = "block";
-  //   }else{
-  //     document.getElementById("exit-button").style.display = "none";
-  //   } 
-  // }
+  function showExitButton(show){
+    if(!show){
+      document.getElementById("exit-group").style.display = "block";
+    }else{
+      document.getElementById("exit-group").style.display = "none";
+    } 
+  }
 
   // Overlay
   const overlay = document.getElementById('overlay');
