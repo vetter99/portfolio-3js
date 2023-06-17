@@ -676,7 +676,6 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
 
   document.querySelectorAll('.fa-github, .fa-linkedin, .fa-envelope').forEach(function(icon) {
     icon.addEventListener('click', function() {
-        console.log("Here");
       var link = this.parentNode; // Get the parent link element
       var href = link.getAttribute('href'); // Get the href attribute
       if (href) {
@@ -811,6 +810,7 @@ function showNextButton(show){
   const exitButton = document.querySelector('.exit-button');
   exitButton.addEventListener('click', function (){
     // close project
+    console.log("close project")
     slide(openSection); //need to keep track of open section number?
   });
 
