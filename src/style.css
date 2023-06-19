@@ -109,6 +109,11 @@ p{
 
 }
 
+.section p {
+  max-width: 45em;
+  word-wrap: break-word;
+}
+
 .visible{
     visibility: visible;
 }
