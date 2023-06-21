@@ -6,8 +6,8 @@
 }
 
 html, body {
-  background-color: rgb(14, 14, 14);
   overflow: hidden;
+  background-color: black;
 }
 
 body {
@@ -112,6 +112,7 @@ p{
 .section p {
   max-width: 45em;
   word-wrap: break-word;
+  padding-right: 5px;
 }
 
 .visible{
@@ -255,7 +256,7 @@ h1{
 }
 
 #content {
-  opacity: 0;  
+  /* opacity: 0;   */
   transition: opacity 1s ease;
 }
 

@@ -20,10 +20,10 @@ const gltfLoader = new GLTFLoader()
  * Debug
  */
 const gui = new dat.GUI()
-gui.hide();
+// gui.hide();
 
 const parameters = {
-    materialColor: '#ffeded'
+    materialColor: '#f0ff7e'
 }
 
 // gui
@@ -45,11 +45,11 @@ const scene = new THREE.Scene()
 
 
 // object group
-const techGroup0 = new THREE.Group()
-techGroup0.position.set(10, -10, 0);
-techGroup0.rotation.set(0,4.5, 0);
-techGroup0.scale.set(0.25,0.25,0.25)
-scene.add(techGroup0)
+// const techGroup0 = new THREE.Group()
+// techGroup0.position.set(10, -10, 0);
+// techGroup0.rotation.set(0,4.5, 0);
+// techGroup0.scale.set(0.25,0.25,0.25)
+// scene.add(techGroup0)
 
 // Load 3D objects into group
 // loadIconObject("/objects/java.glb",techGroup0,[0, 0, -2.5]);
@@ -59,13 +59,14 @@ scene.add(techGroup0)
 // loadIconObject("/objects/cartridge.glb",techGroup0,[0, 0, -2.5]);
 
 const techGroup1 = new THREE.Group()
-techGroup1.position.set(10, -10, 0);
-techGroup1.rotation.set(0,6, 0); 
-techGroup1.scale.set(0.25,0.25,0.25)
+techGroup1.position.set(10, -2, 0);
+techGroup1.rotation.set(0,0, 0); 
 scene.add(techGroup1)
 
-// loadIconObject("/objects/cartridge.glb",techGroup1,[0, 0, -2.5]);
 
+loadIconObject("/objects/1.glb",techGroup1,[-0.05, 0, 0]);
+loadIconObject("/objects/1.glb",techGroup1,[0, 0, 0]);
+loadIconObject("/objects/1.glb",techGroup1,[0.05, 0, 0]);
 
 const techGroup2 = new THREE.Group()
 techGroup2.position.set(10, -10, 0);
@@ -74,15 +75,15 @@ techGroup2.scale.set(5,5,5)
 scene.add(techGroup2)
 
 // loadIconObject("/objects/carttest.glb",techGroup2,[0, 0, -2.5]);
-
+2
 
 /**
  * Objects
  */
 // Texture
-// const textureLoader = new THREE.TextureLoader()
-// const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
-// gradientTexture.magFilter = THREE.NearestFilter
+const textureLoader = new THREE.TextureLoader()
+const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
+gradientTexture.magFilter = THREE.NearestFilter
 
 
 // // Material
@@ -161,16 +162,16 @@ var sectionMeshes = [ meshGroup0, meshGroup1, meshGroup2, meshGroup3 ]
  */
 
 // Ambient light
-// const ambientLight = new THREE.AmbientLight('white', 0)
+// const ambientLight = new THREE.AmbientLight('white', 10)
 // scene.add(ambientLight)
 
 
 
 // Directional light Top Right
 const directionalLightTopRight = new THREE.DirectionalLight('#b9d5ff', 1)
-directionalLightTopRight.position.set(3, 6, 8)
+directionalLightTopRight.position.set(0.5, -0.25, 4)
 
-const target = new THREE.Vector3(0, 2, 0); // Set the new target coordinates
+const target = new THREE.Vector3(0, 0, 0); // Set the new target coordinates
 directionalLightTopRight.target.position.copy(target);
 scene.add(directionalLightTopRight);
 
@@ -180,7 +181,7 @@ const directionalLightHelperTop = new THREE.DirectionalLightHelper(directionalLi
 
 //Directional light Top Left
 const directionalLightTopLeft = new THREE.DirectionalLight('#b9d5ff', 1)
-directionalLightTopLeft.position.set(-3, 6, 8)
+directionalLightTopLeft.position.set(-0.5, -0.25, 4)
 
 
 directionalLightTopLeft.target.position.copy(target);
@@ -195,29 +196,29 @@ const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(direction
 /**
  * Particles
  */
-// const particlesCount = 200
-// const positions = new Float32Array(particlesCount * 3)
+const particlesCount = 275
+const positions = new Float32Array(particlesCount * 3.5)
 
-// for(let i = 0; i < particlesCount; i++)
-// {
-//     positions[i * 3 + 0] = (Math.random() - 0.5) * 10
-//     positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
-//     positions[i * 3 + 2] = (Math.random() - 0.5) * 10
-// }
+for(let i = 0; i < particlesCount; i++)
+{
+    positions[i * 3 + 0] = (Math.random() - 0.5) * 10
+    positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20
+}
 
-// const particlesGeometry = new THREE.BufferGeometry()
-// particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+const particlesGeometry = new THREE.BufferGeometry()
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
 
-// // Material
-// const particlesMaterial = new THREE.PointsMaterial({
-//     color: parameters.materialColor,
-//     sizeAttenuation: textureLoader,
-//     size: 0.03
-// })
+// Material
+const particlesMaterial = new THREE.PointsMaterial({
+    color: parameters.materialColor,
+    sizeAttenuation: textureLoader,
+    size: 0.03
+})
 
-// // Particles
-// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-// scene.add(particles)
+// Particles
+const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+scene.add(particles)
 
 /**
  * Sizes
@@ -263,8 +264,8 @@ camera.position.z = 4 //4
 scene.add(camera)
 
 
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 
 
 /**
@@ -272,7 +273,8 @@ scene.add(camera)
  */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
-    powerPreference: "high-performance"
+    powerPreference: "high-performance",
+    alpha: true // transparent background
 })
 
 renderer.setSize(sizes.width, sizes.height)
@@ -327,7 +329,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    // controls.update();
+    controls.update();
 
 
     // Call tick again on the next frame
@@ -481,7 +483,7 @@ function slide(sectionId) {
         xPosition = 0;
         yPosition = 0;
 
-        slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -10, 0), 2500);
+        slideMeshGroupToPosition(sectionId, new THREE.Vector3(10, -1, 0), 1000);
        
         showNextButton(true);
 
@@ -508,9 +510,9 @@ function slide(sectionId) {
          // move mesh first
         slideMeshOver(sectionId,xPosition, yPosition)
 
-        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-3,0) : new THREE.Vector3(2, -2, 0);
+        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-2,0) : new THREE.Vector3(2, -1.5, 0);
 
-        slideMeshGroupToPosition(sectionId, vectorPosition, 2000);
+        slideMeshGroupToPosition(sectionId, vectorPosition, 1000);
 
         showNextButton(false);
 
@@ -592,7 +594,7 @@ function onDocumentClick(event) {
     }
     else if(raycaster.intersectObject(techGroup1).length > 0){
       // console.log('tech group 1 clicked... this is an entire group so cant pinpoint which cartridge was clicked...');
-      addFlipEffect(techGroup1);
+      // addFlipEffect(techGroup1);
     }else{
         // console.log('No mesh clicked!');
     }
@@ -710,18 +712,19 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
 
 
   function mobileResize() {
+    console.log("mobile resize")
     if(window.innerWidth < 768){
       meshGroup0.scale.set(1.25,1.25,1.25)
       meshGroup1.scale.set(1.25,1.25,1.25)
       meshGroup2.scale.set(1.25,1.25,1.25)
       meshGroup3.scale.set(1.25,1.25,1.25)
-      techGroup1.scale.set(0.20,0.20,0.20)
+      techGroup1.scale.set(15,15,15)
     }else{
       meshGroup0.scale.set(1.75,1.75,1.75)
       meshGroup1.scale.set(1.75,1.75,1.75)
       meshGroup2.scale.set(1.75,1.75,1.75)
       meshGroup3.scale.set(1.75,1.75,1.75)
-      techGroup1.scale.set(0.35,0.35,0.35)
+      techGroup1.scale.set(25,25,25)
     }
   }
     
@@ -824,48 +827,48 @@ function showNextButton(show){
   }
 
   // Overlay
-  const overlay = document.getElementById('overlay');
-  const content = document.getElementById('content');
-  const message = document.getElementById('message');
-  const text = `"Live in the future...then build what's missing"\n\nWelcome to my portfolio.`; // Multi-line HTML text
-  const typingSpeed = 75; // Speed of typing animation (in milliseconds)
+  // const overlay = document.getElementById('overlay');
+  // const content = document.getElementById('content');
+  // const message = document.getElementById('message');
+  // const text = `"Live in the future...then build what's missing"\n\nWelcome to my portfolio.`; // Multi-line HTML text
+  // const typingSpeed = 75; // Speed of typing animation (in milliseconds)
   
-  // Show overlay and start typewriter animation
-  overlay.style.display = 'flex';
-  typewriterEffect(text, message);
+  // // Show overlay and start typewriter animation
+  // overlay.style.display = 'flex';
+  // typewriterEffect(text, message);
   
-  // Function for typewriter animation
-  function typewriterEffect(text, element) {
-    const htmlLines = text.split('\n').map(line => line.trim()).filter(line => line !== '');
-    let lineIndex = 0;
-    let charIndex = 0;
-    element.innerHTML = ''; // Clear existing content
+  // // Function for typewriter animation
+  // function typewriterEffect(text, element) {
+  //   const htmlLines = text.split('\n').map(line => line.trim()).filter(line => line !== '');
+  //   let lineIndex = 0;
+  //   let charIndex = 0;
+  //   element.innerHTML = ''; // Clear existing content
   
-    function type() {
-      if (lineIndex < htmlLines.length) {
-        const currentLine = htmlLines[lineIndex];
-        if (charIndex < currentLine.length) {
-          if (currentLine.charAt(charIndex) === '\n') {
-            element.innerHTML += '<br><br>'; // Add an entire space between lines
-          } else {
-            element.innerHTML += currentLine.charAt(charIndex);
-          }
-          charIndex++;
-          setTimeout(type, typingSpeed);
-        } else {
-          lineIndex++;
-          charIndex = 0;
-          element.innerHTML += '<br><br>'; // Add an entire space between lines
-          setTimeout(type, typingSpeed);
-        }
-      } else {
-        // Hide overlay and show content after typing animation completes
-        setTimeout(() => {
-          overlay.classList.add('hide');
-          content.style.opacity = 1;
-        }, 1000); // Delay before hiding overlay (adjust as needed)
-      }
-    }
+  //   function type() {
+  //     if (lineIndex < htmlLines.length) {
+  //       const currentLine = htmlLines[lineIndex];
+  //       if (charIndex < currentLine.length) {
+  //         if (currentLine.charAt(charIndex) === '\n') {
+  //           element.innerHTML += '<br><br>'; // Add an entire space between lines
+  //         } else {
+  //           element.innerHTML += currentLine.charAt(charIndex);
+  //         }
+  //         charIndex++;
+  //         setTimeout(type, typingSpeed);
+  //       } else {
+  //         lineIndex++;
+  //         charIndex = 0;
+  //         element.innerHTML += '<br><br>'; // Add an entire space between lines
+  //         setTimeout(type, typingSpeed);
+  //       }
+  //     } else {
+  //       // Hide overlay and show content after typing animation completes
+  //       setTimeout(() => {
+  //         overlay.classList.add('hide');
+  //         content.style.opacity = 1;
+  //       }, 1000); // Delay before hiding overlay (adjust as needed)
+  //     }
+  //   }
   
-    type();
-  }
+  //   type();
+  // }
