@@ -206,8 +206,8 @@ h1{
 /* Partially complete */
 .button-wrapper {
   position: fixed;
-  top: 10%;
-  left: 10%;
+  top: 15%;
+  left: 15%;
   transform: translate(-50%, -50%);
   transition: background-color 1s ease;
 }

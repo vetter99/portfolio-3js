@@ -19,7 +19,7 @@ const gltfLoader = new GLTFLoader()
 /**
  * Debug
  */
-const gui = new dat.GUI()
+// const gui = new dat.GUI()
 // gui.hide();
 
 const parameters = {
@@ -196,29 +196,29 @@ const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(direction
 /**
  * Particles
  */
-const particlesCount = 275
-const positions = new Float32Array(particlesCount * 3.5)
+// const particlesCount = 275
+// const positions = new Float32Array(particlesCount * 3.5)
 
-for(let i = 0; i < particlesCount; i++)
-{
-    positions[i * 3 + 0] = (Math.random() - 0.5) * 10
-    positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 20
-}
+// for(let i = 0; i < particlesCount; i++)
+// {
+//     positions[i * 3 + 0] = (Math.random() - 0.5) * 10
+//     positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
+//     positions[i * 3 + 2] = (Math.random() - 0.5) * 20
+// }
 
-const particlesGeometry = new THREE.BufferGeometry()
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+// const particlesGeometry = new THREE.BufferGeometry()
+// particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
 
-// Material
-const particlesMaterial = new THREE.PointsMaterial({
-    color: parameters.materialColor,
-    sizeAttenuation: textureLoader,
-    size: 0.03
-})
+// // Material
+// const particlesMaterial = new THREE.PointsMaterial({
+//     color: parameters.materialColor,
+//     sizeAttenuation: textureLoader,
+//     size: 0.03
+// })
 
-// Particles
-const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+// // Particles
+// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+// scene.add(particles)
 
 /**
  * Sizes
@@ -264,8 +264,8 @@ camera.position.z = 4 //4
 scene.add(camera)
 
 
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
 
 /**
@@ -329,7 +329,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    controls.update();
+    // controls.update();
 
 
     // Call tick again on the next frame
