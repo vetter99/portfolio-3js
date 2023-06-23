@@ -256,7 +256,7 @@ h1{
 }
 
 #content {
-  /* opacity: 0;   */
+  opacity: 0;  
   transition: opacity 1s ease;
 }
 
