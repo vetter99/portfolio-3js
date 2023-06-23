@@ -43,20 +43,16 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+const techGroup0 = new THREE.Group()
+techGroup0.position.set(10, -2, 0);
+techGroup0.rotation.set(0,0, 0); 
+scene.add(techGroup0)
 
-// object group
-// const techGroup0 = new THREE.Group()
-// techGroup0.position.set(10, -10, 0);
-// techGroup0.rotation.set(0,4.5, 0);
-// techGroup0.scale.set(0.25,0.25,0.25)
-// scene.add(techGroup0)
 
-// Load 3D objects into group
-// loadIconObject("/objects/java.glb",techGroup0,[0, 0, -2.5]);
-// loadIconObject("/objects/blender.glb",techGroup0,[0, 0, 2.5]);
-// loadIconObject("/objects/nativescript.glb",techGroup0,[0, 0, 0]);
+loadIconObject("/objects/ns.glb",techGroup0,[-0.05, 0, 0]);
+loadIconObject("/objects/angular.glb",techGroup0,[0, 0, 0]);
+// loadIconObject("/objects/firebase.glb",techGroup0,[0.05, 0, 0]);
 
-// loadIconObject("/objects/cartridge.glb",techGroup0,[0, 0, -2.5]);
 
 const techGroup1 = new THREE.Group()
 techGroup1.position.set(10, -2, 0);
@@ -64,18 +60,28 @@ techGroup1.rotation.set(0,0, 0);
 scene.add(techGroup1)
 
 
-loadIconObject("/objects/1.glb",techGroup1,[-0.05, 0, 0]);
-loadIconObject("/objects/1.glb",techGroup1,[0, 0, 0]);
-loadIconObject("/objects/1.glb",techGroup1,[0.05, 0, 0]);
+loadIconObject("/objects/ns.glb",techGroup1,[-0.05, 0, 0]);
+loadIconObject("/objects/angular.glb",techGroup1,[0, 0, 0]);
+loadIconObject("/objects/terraform.glb",techGroup1,[0.05, 0, 0]);
 
 const techGroup2 = new THREE.Group()
-techGroup2.position.set(10, -10, 0);
-techGroup2.rotation.set(0,4.5, 0);
-techGroup2.scale.set(5,5,5)
+techGroup2.position.set(10, -2, 0);
+techGroup2.rotation.set(0,0, 0);
 scene.add(techGroup2)
 
-// loadIconObject("/objects/carttest.glb",techGroup2,[0, 0, -2.5]);
-2
+loadIconObject("/objects/node.glb",techGroup2,[-0.05, 0, 0]);
+loadIconObject("/objects/aws.glb",techGroup2,[0, 0, 0]);
+loadIconObject("/objects/terraform.glb",techGroup2,[0.05, 0, 0]);
+
+
+const techGroup3 = new THREE.Group()
+techGroup3.position.set(10, -2, 0);
+techGroup3.rotation.set(0,0, 0);
+scene.add(techGroup3)
+
+loadIconObject("/objects/python.glb",techGroup3,[-0.05, 0, 0]);
+loadIconObject("/objects/aws.glb",techGroup3,[0, 0, 0]);
+loadIconObject("/objects/java.glb",techGroup3,[0.05, 0, 0]);
 
 /**
  * Objects
@@ -162,10 +168,8 @@ var sectionMeshes = [ meshGroup0, meshGroup1, meshGroup2, meshGroup3 ]
  */
 
 // Ambient light
-// const ambientLight = new THREE.AmbientLight('white', 10)
+// const ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
 // scene.add(ambientLight)
-
-
 
 // Directional light Top Right
 const directionalLightTopRight = new THREE.DirectionalLight('#b9d5ff', 1)
@@ -505,12 +509,12 @@ function slide(sectionId) {
         document.removeEventListener('wheel', handleWheel, true);
         
         isMobileSize() ? xPosition = 0 : xPosition = -2.5;
-        isMobileSize() ? yPosition = 0.75 : yPosition = 0;
+        isMobileSize() ? yPosition = 0.90 : yPosition = 0;
 
          // move mesh first
         slideMeshOver(sectionId,xPosition, yPosition)
 
-        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-2,0) : new THREE.Vector3(2, -1.5, 0);
+        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-2.25,0) : new THREE.Vector3(2, -1.5, 0);
 
         slideMeshGroupToPosition(sectionId, vectorPosition, 1000);
 
@@ -637,12 +641,14 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
     
     var group;
 
-    if(sectionMeshes[sectionNumber].name == "project0"){
+    if(sectionNumber == 0){
         group = techGroup0 
-    }else if(sectionMeshes[sectionNumber].name == "project1"){
+    }else if(sectionNumber == 1){
         group = techGroup1
+    }else if(sectionNumber == 2){
+      group = techGroup2
     }else{
-        group = techGroup2
+        group = techGroup3
     }  
     // Store the current position of the group
     const startPosition = group.position.clone();
@@ -713,23 +719,32 @@ function slideMeshGroupToPosition(sectionNumber, targetPosition, duration) {
 
   function mobileResize() {
     console.log("mobile resize")
-    if(window.innerWidth < 768){
+    if(window.innerWidth < 900){
       meshGroup0.scale.set(1.25,1.25,1.25)
       meshGroup1.scale.set(1.25,1.25,1.25)
       meshGroup2.scale.set(1.25,1.25,1.25)
       meshGroup3.scale.set(1.25,1.25,1.25)
+
+      techGroup0.scale.set(15,15,15)
       techGroup1.scale.set(15,15,15)
+      techGroup2.scale.set(15,15,15)
+      techGroup3.scale.set(15,15,15)
+      
     }else{
       meshGroup0.scale.set(1.75,1.75,1.75)
       meshGroup1.scale.set(1.75,1.75,1.75)
       meshGroup2.scale.set(1.75,1.75,1.75)
       meshGroup3.scale.set(1.75,1.75,1.75)
+
+      techGroup0.scale.set(25,25,25)
       techGroup1.scale.set(25,25,25)
+      techGroup2.scale.set(25,25,25)
+      techGroup3.scale.set(25,25,25)
     }
   }
     
   function isMobileSize() {
-    return window.innerWidth < 768;
+    return window.innerWidth < 900;
   }
 
   function addFlipEffect(mesh) {
