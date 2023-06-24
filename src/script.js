@@ -514,7 +514,7 @@ function slide(sectionId) {
          // move mesh first
         slideMeshOver(sectionId,xPosition, yPosition)
 
-        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-2.25,0) : new THREE.Vector3(2, -1.5, 0);
+        const vectorPosition = isMobileSize() ? new THREE.Vector3(0,-2.5,0) : new THREE.Vector3(2, -1.5, 0);
 
         slideMeshGroupToPosition(sectionId, vectorPosition, 1000);
 
