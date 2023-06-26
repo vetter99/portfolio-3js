@@ -205,9 +205,9 @@ const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(direction
 
 // for(let i = 0; i < particlesCount; i++)
 // {
-//     positions[i * 3 + 0] = (Math.random() - 0.5) * 10
-//     positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance * sectionMeshes.length
-//     positions[i * 3 + 2] = (Math.random() - 0.5) * 20
+//     positions[i * 3 + 0] = (Math.random() - 0.5) * 17
+//     positions[i * 3 + 1] = (Math.random() - 0.5) * 17
+//     positions[i * 3 + 2] = (Math.random() - 0.5) * 17
 // }
 
 // const particlesGeometry = new THREE.BufferGeometry()
@@ -217,7 +217,7 @@ const directionalLightHelperTopLeft = new THREE.DirectionalLightHelper(direction
 // const particlesMaterial = new THREE.PointsMaterial({
 //     color: parameters.materialColor,
 //     sizeAttenuation: textureLoader,
-//     size: 0.03
+//     size: 0.02
 // })
 
 // // Particles
@@ -350,12 +350,41 @@ tick()
  */
 let currentSection = 1
 
-document.addEventListener('wheel', handleWheel, true);  //adding the wheel event listener from the start
+
+var startY = 0;
+
+document.addEventListener('touchstart', function(event) {
+  startY = event.touches[0].clientY;
+});
+
+document.addEventListener('touchmove', touchMoveListner, true);
+
+function touchMoveListner(event){
+  var deltaY = event.touches[0].clientY - startY;
+  console.log("Here")
+  callWheel(deltaY)
+}
+
+
+document.addEventListener('wheel', callWheel, true);  //adding the wheel event listener from the start
+
+// intermediary function to call the handleWheel function becuz of touch event and wheel event...
+function callWheel(input){
+  if(undefined == input.deltaY){
+    // console.log("touch scrolling")
+    handleWheel(-input)
+  }else{
+    // console.log("mouse scrolling")
+    handleWheel(input.deltaY)
+  }
+}
+
 
 var animationRunning = false;
 
-function handleWheel(event) {
+function handleWheel(deltaY) {
 
+  // console.log("Delta: " + deltaY);
 
 //   instead of removing the event listener and adding it back, we can just use a boolean to check if the animation is running
   if (animationRunning == false) {
@@ -367,7 +396,6 @@ function handleWheel(event) {
         animationRunning = false;
     }, 2000);
 
-    //   console.log("y scroll direction: " + event.deltaY)
 
   var yPosition = 0;
   
@@ -375,7 +403,7 @@ function handleWheel(event) {
 //   Every time you scroll up, you put the bottom most item at the top…
 // may need a delay to wait for the animation to finish
 
-  if(event.deltaY > 0) { //scrolling down
+  if(deltaY > 0) { //scrolling down
     yPosition = 7;
     currentSection++;
 
@@ -397,8 +425,7 @@ function handleWheel(event) {
   //   console.log(entry.name);
   // });
 
-
-//   instead of an arbitrary value for yPosition, we can use the sizes.height to get the correct value
+//   TODO: instead of an arbitrary value for yPosition, we can use the sizes.height to get the correct value?
 
   //move all of the mesh objects //TODO make them a group and move the entire group together?
   for(const mesh of sectionMeshes){
@@ -484,6 +511,8 @@ function slide(sectionId) {
     if(projectOpen){
         
         document.addEventListener('wheel', handleWheel, true);
+        document.addEventListener('touchmove', touchMoveListner, true);
+
         xPosition = 0;
         yPosition = 0;
 
@@ -507,6 +536,8 @@ function slide(sectionId) {
        
     }else{
         document.removeEventListener('wheel', handleWheel, true);
+        document.removeEventListener('touchmove', touchMoveListner, true);
+
         
         isMobileSize() ? xPosition = 0 : xPosition = -2.5;
         isMobileSize() ? yPosition = 0.90 : yPosition = 0;
