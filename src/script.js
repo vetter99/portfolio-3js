@@ -510,7 +510,7 @@ function slide(sectionId) {
 
     if(projectOpen){
         
-        document.addEventListener('wheel', handleWheel, true);
+        document.addEventListener('wheel', callWheel, true);
         document.addEventListener('touchmove', touchMoveListner, true);
 
         xPosition = 0;
@@ -535,7 +535,7 @@ function slide(sectionId) {
 
        
     }else{
-        document.removeEventListener('wheel', handleWheel, true);
+        document.removeEventListener('wheel', callWheel, true);
         document.removeEventListener('touchmove', touchMoveListner, true);
 
         
